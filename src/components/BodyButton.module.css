@@ -1,0 +1,20 @@
+.bodyButton {
+  width: 100%;
+  background: #1166ae;
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  outline: none;
+  margin: 0 auto;
+  display: block;
+}
+
+.bodyButton:hover {
+  background: #0d4e8a;
+} 

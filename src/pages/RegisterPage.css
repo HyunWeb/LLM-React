@@ -1,0 +1,100 @@
+.register-bg {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.register-center {
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-title {
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.register-form {
+  width: 100%;
+  max-width: 350px;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.register-label {
+  color: #b0b0b0;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+  margin-left: 2px;
+}
+
+.register-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fff;
+  color: #222;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  outline: none;
+}
+
+.register-input::placeholder {
+  color: #b0b0b0;
+}
+
+.register-link-row {
+  margin-top: 8px;
+  margin-bottom: 32px;
+  color: #fff;
+  font-size: 0.98rem;
+  text-align: center;
+}
+
+.register-link {
+  color: #6B8BA9;
+  font-weight: 500;
+  margin-left: 6px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.register-link:hover {
+  text-decoration: underline;
+}
+
+.register-policy-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  font-size: 0.95rem;
+  margin-top: 16px;
+}
+
+.register-policy {
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+.register-policy:hover {
+  text-decoration: underline;
+}
+
+.register-policy-divider {
+  color: #fff;
+  font-size: 1rem;
+} 
