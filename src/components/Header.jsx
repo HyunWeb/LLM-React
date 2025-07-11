@@ -4,7 +4,7 @@ import { useSidebar } from "../context/SidebarContext";
 import HeaderButton from "./HeaderButton";
 import styles from "./Header.module.css";
 import btnStyles from "./HeaderButton.module.css";
-import useAuthStore from "../store/store";
+import { useAuthStore } from "../store/store";
 
 function Header() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);

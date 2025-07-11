@@ -122,6 +122,7 @@
   font-size: 1.8rem;
   font-weight: 600;
   margin-bottom: 32px;
+  user-select: none; /* 텍스트 선택 방지 */
 }
 
 .chat-messages {
@@ -305,6 +306,7 @@
   margin: 0; /* 기본 마진 제거 */
   padding-left: 20px;
   padding-top: 20px;
+  user-select: none;
 }
 
 .chat-input::-webkit-scrollbar {
@@ -355,6 +357,7 @@
   text-align: center;
   margin-top: 8px;
   margin-right: 25px;
+  user-select: none;
 }
 
 @media (max-width: 768px) {

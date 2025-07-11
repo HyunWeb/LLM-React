@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext } from "react";
 
 const SidebarContext = createContext();
 
@@ -6,7 +6,7 @@ export const SidebarProvider = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => {
-    setIsOpen(prev => !prev);
+    setIsOpen((prev) => !prev);
   };
 
   return (
@@ -16,4 +16,4 @@ export const SidebarProvider = ({ children }) => {
   );
 };
 
-export const useSidebar = () => useContext(SidebarContext); 
+export const useSidebar = () => useContext(SidebarContext);

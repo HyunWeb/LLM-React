@@ -41,7 +41,7 @@
   font-size: 1rem;
   background: #fff;
   color: #222;
-  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
   outline: none;
 }
 
@@ -90,4 +90,4 @@
 .login-policy-divider {
   color: #fff;
   font-size: 1rem;
-} 
+}

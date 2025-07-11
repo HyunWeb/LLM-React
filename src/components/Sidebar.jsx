@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSidebar } from "../context/SidebarContext";
 import styles from "./Sidebar.module.css";
-import useAuthStore from "../store/store";
+import { useAuthStore } from "../store/store";
 
 function Sidebar() {
   const { isOpen, toggleSidebar } = useSidebar();
