@@ -4,6 +4,8 @@ import Lottie from "lottie-react";
 import { formatMessagesForAPI, sendMessage } from "../api/chatApi";
 import { newinputTextStore } from "../store/store";
 import "./ChatPage.css";
+import { useParams } from "react-router-dom";
+import { getChatList } from "../api/mainApi";
 
 // 좋아요/싫어요 아이콘 컴포넌트
 const ThumbUpIcon = () => (
@@ -74,6 +76,22 @@ export default function ChatPage() {
   const textareaRef2 = useRef(null);
   const typingSpeedRef = useRef(30); // 타이핑 속도 (ms)
   const sendbuttonRef = useRef(null);
+  const { chatId } = useParams();
+
+  console.log(messages);
+
+  // 채팅 데이터 가져오기
+  useEffect(() => {
+    const fetchChatData = async () => {
+      try {
+        const response = await getChatList(chatId);
+        setMessages(response.data);
+      } catch (error) {
+        console.error("채팅 데이터 가져오기 실패:", error);
+      }
+    };
+    fetchChatData();
+  }, [chatId]);
 
   useEffect(() => {
     if (shouldAutoSend && newinputText) {

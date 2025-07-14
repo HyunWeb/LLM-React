@@ -1,0 +1,36 @@
+.chat-menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateX(100%);
+
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+
+  > li > button {
+    background: none;
+    border: none;
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    list-style: none;
+    padding: 10px;
+    cursor: pointer;
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
+  > li:first-of-type > button {
+    color: rgb(199, 0, 0);
+  }
+}

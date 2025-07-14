@@ -36,7 +36,7 @@
 
 .chatList {
   flex-grow: 1;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   padding: 16px 0;
 }
 
@@ -45,6 +45,25 @@
   cursor: pointer;
   transition: background 0.2s;
   font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+.chatTitle {
+  flex: 1;
+}
+.deleteButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  > svg {
+    width: 18px;
+    height: 18px;
+    color: #fff;
+  }
 }
 
 .chatItem:hover {
