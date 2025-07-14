@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSidebar } from "../context/SidebarContext";
 import styles from "./Sidebar.module.css";
-import { useAuthStore } from "../store/store";
+import { useAuthStore, useChatMenuStore } from "../store/store";
+import ChatMenu from "./ChatMenu";
 
 function Sidebar() {
   const { isOpen, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
   const { userEmail, setUserEmail } = useAuthStore();
-
+  const { isMenuOpen, setIsMenuOpen, isAlertModalOpen, setIsAlertModalOpen } =
+    useChatMenuStore();
   const handleChatClick = (chatId) => {
     navigate(`/chat/${chatId}`);
+  };
+
+  const handleMenuOpen = (chatId) => {
+    // 현재 메뉴가 열려있는 상태라면 닫고, 닫혀있는 상태라면 열기
+    setIsMenuOpen(isMenuOpen === chatId ? false : chatId);
   };
 
   return (
@@ -29,15 +36,63 @@ function Sidebar() {
           </button>
         </div>
         <ul className={styles.chatList}>
-          <li className={styles.chatItem} onClick={() => handleChatClick(1)}>
-            1번 채팅
+          <li className={styles.chatItem}>
+            <span
+              className={styles.chatTitle}
+              onClick={() => handleChatClick(1)}
+            >
+              1번 채팅
+            </span>
+            <button
+              className={styles.deleteButton}
+              onClick={() => handleMenuOpen(1)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-three-dots-vertical"
+                viewBox="0 0 16 16"
+              >
+                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+              </svg>
+              {isMenuOpen === 1 && <ChatMenu />}
+            </button>
           </li>
           <li className={styles.chatItem} onClick={() => handleChatClick(2)}>
-            2번 채팅
+            <span
+              className={styles.chatTitle}
+              onClick={() => handleChatClick(2)}
+            >
+              2번 채팅
+            </span>
+            <button
+              className={styles.deleteButton}
+              onClick={() => handleMenuOpen(2)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-three-dots-vertical"
+                viewBox="0 0 16 16"
+              >
+                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+              </svg>
+              {isMenuOpen === 2 && <ChatMenu />}
+            </button>
           </li>
         </ul>
         {userEmail ? (
-          <button className={styles.loginContainer}>
+          <button
+            className={styles.loginContainer}
+            onClick={() => {
+              localStorage.removeItem("userEmail");
+              window.location.reload();
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -58,7 +113,13 @@ function Sidebar() {
             로그아웃
           </button>
         ) : (
-          <button className={styles.loginContainer}>
+          <button
+            className={styles.loginContainer}
+            onClick={() => {
+              navigate("/login");
+              toggleSidebar();
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"

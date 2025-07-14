@@ -1,0 +1,119 @@
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+
+  background-color: #121212f2;
+  border: 2px solid #ffffff0f;
+  z-index: 1000;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  padding: 40px;
+  box-sizing: border-box;
+}
+.modal-content {
+  /* 아이콘 */
+  div > svg {
+    width: 50px;
+    height: 50px;
+    color: #ff4d5d;
+    position: relative;
+    z-index: 10;
+  }
+  div:first-of-type {
+    position: relative;
+  }
+  /* 아이콘 배경 */
+  div:first-of-type::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background-color: #fff;
+  }
+
+  p {
+    font-size: 15px;
+    color: #a5a5a5;
+  }
+}
+.modal-close-button {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  svg {
+    width: 25px;
+    height: 25px;
+    color: #fff;
+  }
+}
+
+.alert-modal-content-buttons {
+  h2 {
+    user-select: none;
+  }
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  button {
+    box-sizing: border-box;
+    padding: 10px 20px;
+    width: 100px;
+    border-radius: 5px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  button:first-of-type {
+    background-color: #121212;
+    border: 2px solid #ffffff0f;
+  }
+}
+.delete-button {
+  background-color: #ff4d5d;
+}
+.edit-button {
+  background-color: #3b82f6;
+}
+
+.modal-edit-content {
+  h2 {
+    user-select: none;
+  }
+  div > svg {
+    width: 50px;
+    height: 50px;
+    color: #3b82f6;
+    position: relative;
+    z-index: 10;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #353535;
+    color: #fff;
+    font-size: 15px;
+    box-sizing: border-box;
+  }
+}

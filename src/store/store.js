@@ -11,3 +11,22 @@ export const newinputTextStore = create((set) => ({
   shouldAutoSend: false,
   setShouldAutoSend: (value) => set({ shouldAutoSend: value }),
 }));
+
+export const useChatMenuStore = create((set) => ({
+  isMenuOpen: false,
+  setIsMenuOpen: (value) => set({ isMenuOpen: value }),
+  isAlertModalOpen: false,
+  setIsAlertModalOpen: (value) => set({ isAlertModalOpen: value }),
+  isEditModalOpen: false,
+  setIsEditModalOpen: (value) => set({ isEditModalOpen: value }),
+}));
+export const useCustomAlertStore = create((set) => ({
+  isCustomAlertOpen: false,
+  setIsCustomAlertOpen: (value) => set({ isCustomAlertOpen: value }),
+  alertTitle: "",
+  setAlertTitle: (title) => set({ alertTitle: title }),
+  alertMessage: "",
+  setAlertMessage: (message) => set({ alertMessage: message }),
+  alertType: "success",
+  setAlertType: (type) => set({ alertType: type }),
+}));
