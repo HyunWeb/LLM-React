@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import Header from "../components/Header";
 import Lottie from "lottie-react";
 import "./ChatPage.css";
 import { useNavigate } from "react-router-dom";
@@ -90,7 +89,6 @@ export default function MainPage() {
 
   return (
     <div>
-      <Header />
       <div className="chat-bg">
         <div className={`chat-container empty-chat`}>
           <div className="initial-layout">

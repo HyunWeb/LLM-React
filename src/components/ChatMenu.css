@@ -13,6 +13,9 @@
   flex-direction: column;
   gap: 10px;
   z-index: 10;
+  > li {
+    list-style: none;
+  }
 
   > li > button {
     background: none;

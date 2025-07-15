@@ -48,7 +48,7 @@
   font-size: 1rem;
   background: #fff;
   color: #222;
-  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
   outline: none;
 }
 
@@ -58,14 +58,17 @@
 
 .register-link-row {
   margin-top: 8px;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   color: #fff;
   font-size: 0.98rem;
   text-align: center;
 }
-
+.request-company-row {
+  margin-top: 0px;
+  margin-bottom: 32px;
+}
 .register-link {
-  color: #6B8BA9;
+  color: #6b8ba9;
   font-weight: 500;
   margin-left: 6px;
   text-decoration: none;
@@ -97,4 +100,4 @@
 .register-policy-divider {
   color: #fff;
   font-size: 1rem;
-} 
+}

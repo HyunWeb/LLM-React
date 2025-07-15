@@ -48,3 +48,24 @@ export const formatMessagesForAPI = (chatHistory) => {
     content: msg.text,
   }));
 };
+
+// 채팅 개수 조회
+export const getChatList = async () => {
+  try {
+    // const response = await axios.get(`/api/user/register`);
+    // return response.data;
+    return [
+      {
+        id: 1,
+        title: "1번 채팅",
+      },
+      {
+        id: 2,
+        title: "2번 채팅",
+      },
+    ];
+  } catch (error) {
+    console.error("Error fetching chats:", error);
+    throw error;
+  }
+};

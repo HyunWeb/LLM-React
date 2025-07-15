@@ -6,12 +6,15 @@ import ChatPage from "./pages/ChatPage";
 import Sidebar from "./components/Sidebar";
 import { SidebarProvider } from "./context/SidebarContext";
 import MainPage from "./pages/MainPage";
-import ChatsPage from "./pages/ChatsPage";
 import Modal from "./components/Modal";
 import { useChatMenuStore, useCustomAlertStore } from "./store/store";
 import AlertModal from "./components/Modal/AlertModal";
 import EditModal from "./components/Modal/EditModal";
 import CustomAlert from "./components/Modal/CustomAlert";
+import FindPasswordPage from "./pages/FindPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import RequestCompanyPage from "./pages/RequestCompanyPage";
+import Header from "./components/Header";
 
 function App() {
   const {
@@ -42,12 +45,15 @@ function App() {
           <CustomAlert setIsCustomAlertOpen={setIsCustomAlertOpen} />
         )}
         {/* 라우트 */}
+        <Header />
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/chat" element={<ChatsPage />} />
           <Route path="/chat/:chatId" element={<ChatPage />} />
+          <Route path="/find-password" element={<FindPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/request-company" element={<RequestCompanyPage />} />
         </Routes>
       </Router>
     </SidebarProvider>

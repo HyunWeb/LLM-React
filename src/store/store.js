@@ -1,9 +1,9 @@
 import { create } from "zustand";
 
-export const useAuthStore = create((set) => ({
-  userEmail: null,
-  setUserEmail: (email) => set({ userEmail: email }),
-}));
+// export const useAuthStore = create((set) => ({
+//   userEmail: null,
+//   setUserEmail: (email) => set({ userEmail: email }),
+// }));
 
 export const newinputTextStore = create((set) => ({
   newinputText: "",
@@ -29,4 +29,15 @@ export const useCustomAlertStore = create((set) => ({
   setAlertMessage: (message) => set({ alertMessage: message }),
   alertType: "success",
   setAlertType: (type) => set({ alertType: type }),
+}));
+
+// 채팅 목록 관리
+export const useChatListStore = create((set) => ({
+  chatList: [],
+  setChatList: (chatList) => set({ chatList }),
+  addChat: (newChat) =>
+    set((state) => ({
+      chatList: [...state.chatList, newChat],
+    })),
+  updateChatList: (updatedList) => set({ chatList: updatedList }),
 }));
