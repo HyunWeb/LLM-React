@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useSidebar } from "../context/SidebarContext";
 import styles from "./Sidebar.module.css";
 import { useChatMenuStore } from "../store/store";
 import ChatMenu from "./ChatMenu";
+import { getChatList } from "../api/chatApi";
 
 function Sidebar() {
   const { isOpen, toggleSidebar } = useSidebar();
@@ -11,9 +12,24 @@ function Sidebar() {
   const user = JSON.parse(localStorage.getItem("user"));
   const { isMenuOpen, setIsMenuOpen, isAlertModalOpen, setIsAlertModalOpen } =
     useChatMenuStore();
+
   const handleChatClick = (chatId) => {
     navigate(`/chat/${chatId}`);
   };
+  const [chatList, setChatList] = useState([]);
+
+  // 채팅 목록 조회
+  const fetchChats = async () => {
+    try {
+      const response = await getChatList();
+      setChatList(response);
+    } catch (error) {
+      console.error("Error fetching chats:", error);
+    }
+  };
+  useEffect(() => {
+    fetchChats();
+  }, []);
 
   const handleMenuOpen = (chatId) => {
     // 현재 메뉴가 열려있는 상태라면 닫고, 닫혀있는 상태라면 열기
@@ -30,61 +46,53 @@ function Sidebar() {
 
       <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
         <div className={styles.header}>
-          <h3 className={styles.title}>채팅 목록</h3>
+          <h3 className={styles.title}>메뉴</h3>
           <button className={styles.closeButton} onClick={toggleSidebar}>
             &times;
           </button>
         </div>
         <ul className={styles.chatList}>
-          <li className={styles.chatItem}>
-            <span
-              className={styles.chatTitle}
-              onClick={() => handleChatClick(1)}
-            >
-              1번 채팅
-            </span>
-            <button
-              className={styles.deleteButton}
-              onClick={() => handleMenuOpen(1)}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-three-dots-vertical"
-                viewBox="0 0 16 16"
+          {chatList.map((chat) => (
+            <li className={styles.chatItem} key={chat.id}>
+              <span
+                className={styles.chatTitle}
+                onClick={() => handleChatClick(chat.id)}
               >
-                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-              </svg>
-              {isMenuOpen === 1 && <ChatMenu />}
-            </button>
+                {chat.title}
+              </span>
+              <div
+                className={styles.deleteButton}
+                onClick={() => handleMenuOpen(chat.id)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-three-dots-vertical"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+                </svg>
+                {isMenuOpen === chat.id && <ChatMenu />}
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <ul className={styles.subChatList}>
+          <li className={styles.chatItem}>
+            <Link className={styles.subChatTitle} to="/admin">
+              관리자 페이지
+            </Link>
           </li>
           <li className={styles.chatItem}>
-            <span
-              className={styles.chatTitle}
-              onClick={() => handleChatClick(2)}
-            >
-              2번 채팅
-            </span>
-            <button
-              className={styles.deleteButton}
-              onClick={() => handleMenuOpen(2)}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-three-dots-vertical"
-                viewBox="0 0 16 16"
-              >
-                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-              </svg>
-              {isMenuOpen === 2 && <ChatMenu />}
-            </button>
+            <Link className={styles.subChatTitle} to="/mypage">
+              마이페이지
+            </Link>
           </li>
         </ul>
+
         {user ? (
           <button
             className={styles.loginContainer}

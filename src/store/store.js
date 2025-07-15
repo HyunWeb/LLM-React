@@ -30,3 +30,14 @@ export const useCustomAlertStore = create((set) => ({
   alertType: "success",
   setAlertType: (type) => set({ alertType: type }),
 }));
+
+// 채팅 목록 관리
+export const useChatListStore = create((set) => ({
+  chatList: [],
+  setChatList: (chatList) => set({ chatList }),
+  addChat: (newChat) =>
+    set((state) => ({
+      chatList: [...state.chatList, newChat],
+    })),
+  updateChatList: (updatedList) => set({ chatList: updatedList }),
+}));

@@ -78,14 +78,12 @@ export default function ChatPage() {
   const sendbuttonRef = useRef(null);
   const { chatId } = useParams();
 
-  console.log(messages);
-
   // 채팅 데이터 가져오기
   useEffect(() => {
     const fetchChatData = async () => {
       try {
         const response = await getChatList(chatId);
-        setMessages(response.data);
+        setMessages(response);
       } catch (error) {
         console.error("채팅 데이터 가져오기 실패:", error);
       }
