@@ -11,6 +11,7 @@ export default function Modal({ children }) {
   };
 
   useEffect(() => {
+    // 모달 창 닫기 키 추가
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
         handleClose();

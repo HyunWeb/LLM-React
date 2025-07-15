@@ -372,7 +372,6 @@ export default function ChatPage() {
 
   return (
     <div>
-      <Header />
       <div className="chat-bg">
         <div className={`chat-container`}>
           {/* 메시지가 있을 때의 레이아웃 */}

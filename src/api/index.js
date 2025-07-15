@@ -9,17 +9,18 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// 요청 인터셉터를 통해 매번 토큰을 동적으로 추가시킨다.
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  // 두번째 인자 : 에러발생 시 처리
-  (error) => Promise.reject(error)
-);
+// 세션 스토리지 토큰 인증 처리
+// 요청 인터셉터를 통해 매번 최신 토큰을 동적으로 추가시킨다.
+// api.interceptors.request.use(
+//   (config) => {
+//     const token = sessionStorage.getItem("token");
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   // 두번째 인자 : 에러발생 시 처리
+//   (error) => Promise.reject(error)
+// );
 
 export default api;

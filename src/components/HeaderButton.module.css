@@ -2,33 +2,33 @@
   background: #d3d3d3;
   color: #222;
   border: none;
-  border-radius: 16px;
+  border-radius: 6px;
   padding: 6px 18px;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, border 0.2s;
+  box-sizing: border-box;
+  transition-duration: 200ms;
 }
 
 .headerButton:hover {
-  background: #bdbdbd;
+  box-shadow: 0 0 10px 0 #0a417492;
 }
 
 .login {
-    background: #111;
-    color: #fff;
-    border: 2px solid #fff;
-  }
-  
-  .signup {
-    background: #fff;
-    color: #222;
-    border: none;
-  }
+  background: #333;
+  color: #e7e7e7;
+}
+
+.signup {
+  background: #fff;
+  color: #222;
+  border: none;
+}
 
 @media (max-width: 600px) {
   .headerButton {
     padding: 5px 15px;
     font-size: 0.9rem;
   }
-} 
+}

@@ -13,10 +13,12 @@ export default function ChatMenu() {
 
   const openAlertModal = () => {
     setIsAlertModalOpen(true);
+    setIsEditModalOpen(false);
   };
 
   const openEditModal = () => {
     setIsEditModalOpen(true);
+    setIsAlertModalOpen(false);
   };
 
   return (

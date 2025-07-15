@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSidebar } from "../context/SidebarContext";
 import styles from "./Sidebar.module.css";
-import { useAuthStore, useChatMenuStore } from "../store/store";
+import { useChatMenuStore } from "../store/store";
 import ChatMenu from "./ChatMenu";
 
 function Sidebar() {
   const { isOpen, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
-  const { userEmail, setUserEmail } = useAuthStore();
+  const user = JSON.parse(localStorage.getItem("user"));
   const { isMenuOpen, setIsMenuOpen, isAlertModalOpen, setIsAlertModalOpen } =
     useChatMenuStore();
   const handleChatClick = (chatId) => {
@@ -60,7 +60,7 @@ function Sidebar() {
               {isMenuOpen === 1 && <ChatMenu />}
             </button>
           </li>
-          <li className={styles.chatItem} onClick={() => handleChatClick(2)}>
+          <li className={styles.chatItem}>
             <span
               className={styles.chatTitle}
               onClick={() => handleChatClick(2)}
@@ -85,11 +85,12 @@ function Sidebar() {
             </button>
           </li>
         </ul>
-        {userEmail ? (
+        {user ? (
           <button
             className={styles.loginContainer}
             onClick={() => {
               localStorage.removeItem("userEmail");
+              localStorage.removeItem("user");
               window.location.reload();
             }}
           >
