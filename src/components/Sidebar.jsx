@@ -53,7 +53,7 @@ function Sidebar() {
         </div>
         <ul className={styles.chatList}>
           {chatList.map((chat) => (
-            <li className={styles.chatItem} key={chat.id}>
+            <li className={`${styles.chatItem} ${styles.chatItemTitle}`} key={chat.id}>
               <span
                 className={styles.chatTitle}
                 onClick={() => handleChatClick(chat.id)}
@@ -88,7 +88,7 @@ function Sidebar() {
           </li>
           <li className={styles.chatItem}>
             <Link className={styles.subChatTitle} to="/mypage">
-              마이페이지
+              개인정보 수정
             </Link>
           </li>
         </ul>

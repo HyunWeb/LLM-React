@@ -1,21 +1,25 @@
 body {
   margin: 0;
   padding: 0;
+  padding-top: 60px;
   box-sizing: border-box;
-  background: radial-gradient(ellipse at center, #0A4074 0%, #03274B 60%, #021C35 100%);
+  background: radial-gradient(
+    ellipse at center,
+    #0a4074 0%,
+    #03274b 60%,
+    #021c35 100%
+  );
+
   background-attachment: fixed;
   background-size: 200% 200%;
   background-position: center;
   color: #fff;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-  overflow-y: hidden;
 }
 
 /* Chrome, Safari and Opera */
-body::-webkit-scrollbar {
+/* body::-webkit-scrollbar {
   display: none;
-}
+} */
 
 /* 전역적으로 모든 스크롤바 숨기기 */
 * {

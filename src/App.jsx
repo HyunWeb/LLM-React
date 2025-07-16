@@ -15,6 +15,7 @@ import FindPasswordPage from "./pages/FindPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import RequestCompanyPage from "./pages/RequestCompanyPage";
 import Header from "./components/Header";
+import MypagePage from "./pages/MypagePage";
 
 function App() {
   const {
@@ -54,6 +55,7 @@ function App() {
           <Route path="/find-password" element={<FindPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/request-company" element={<RequestCompanyPage />} />
+          <Route path="/mypage" element={<MypagePage />} />
         </Routes>
       </Router>
     </SidebarProvider>

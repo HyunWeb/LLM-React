@@ -46,7 +46,7 @@
 }
 
 .chatItem {
-  padding: 12px 16px;
+  /* padding: 12px 16px; */
   cursor: pointer;
   transition: background 0.2s;
   font-size: 1rem;
@@ -54,12 +54,17 @@
   justify-content: space-between;
   position: relative;
 }
+.chatItemTitle {
+  padding: 12px 16px;
+}
 .chatTitle {
   flex: 1;
 }
 .subChatTitle {
   text-decoration: none;
   color: #fff;
+  width: 100%;
+  padding: 12px 16px;
 }
 .deleteButton {
   background: transparent;

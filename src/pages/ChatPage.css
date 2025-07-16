@@ -10,7 +10,7 @@
   justify-content: center;
   padding: 20px;
   box-sizing: border-box;
-  overflow: hidden;
+  /* overflow: hidden; */
   position: relative;
 }
 
@@ -266,6 +266,12 @@
 }
 
 .chat-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 900px;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 20px;
