@@ -1,32 +1,9 @@
 body {
-  margin: 0;
-  padding: 0;
-  padding-top: 60px;
-  box-sizing: border-box;
-  background: radial-gradient(
-    ellipse at center,
-    #0a4074 0%,
-    #03274b 60%,
-    #021c35 100%
-  );
-
-  background-attachment: fixed;
-  background-size: 200% 200%;
-  background-position: center;
+  font-family: "Noto Sans KR", sans-serif;
   color: #fff;
-}
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
 
-/* Chrome, Safari and Opera */
-/* body::-webkit-scrollbar {
-  display: none;
-} */
-
-/* 전역적으로 모든 스크롤바 숨기기 */
-* {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-}
-
-*::-webkit-scrollbar {
-  display: none;
+  background: #2a2a2a;
 }

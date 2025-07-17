@@ -1,0 +1,6 @@
+.layout-container {
+  display: flex;
+}
+.layout-content {
+  flex-grow: 1;
+}

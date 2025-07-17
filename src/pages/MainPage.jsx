@@ -41,11 +41,11 @@ export default function MainPage() {
   };
 
   // textarea 참조가 설정되었을 때 초기 높이 설정
-  useEffect(() => {
-    if (textareaRef.current) {
-      adjustTextareaHeight(textareaRef.current);
-    }
-  }, []); // 메시지 목록이 변경될 때마다 실행
+  // useEffect(() => {
+  //   if (textareaRef.current) {
+  //     adjustTextareaHeight(textareaRef.current);
+  //   }
+  // }, []); // 메시지 목록이 변경될 때마다 실행
 
   // 메시지 전송 처리
   const handleSubmit = async (e) => {
@@ -92,15 +92,13 @@ export default function MainPage() {
       <div className="chat-bg">
         <div className={`chat-container empty-chat`}>
           <div className="initial-layout">
-            <div className="title-container">
-              <div className="robot-container">
-                <Lottie
-                  animationData={robotAnimationData}
-                  className="robot-animation"
-                />
-              </div>
-              <h1 className="chat-title">무엇을 도와드릴까요?</h1>
-            </div>
+            <h1 className="chat-title">
+              무엇을 도와드릴까요? <br />
+              궁금함 내용을 자유롭게 입력해보세요.
+            </h1>
+            <span className="chat-guide">
+              AI는 실수를 할 수 있습니다. 중요한 정보는 재차 확인하세요.
+            </span>
             <div className="chat-center initial-chat">
               {/* 초기 화면에서만 보이는 입력 폼 */}
               <form className="chat-form" onSubmit={handleSubmit}>
@@ -128,20 +126,19 @@ export default function MainPage() {
                     width="16"
                     height="16"
                     fill="currentColor"
-                    className="bi bi-arrow-up"
+                    className="bi bi-arrow-right-circle-fill"
                     viewBox="0 0 16 16"
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"
-                    />
+                    <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z" />
                   </svg>
                 </button>
               </form>
-              <div className="chat-guide">
-                실수를 할 수 있습니다. 중요한 정보는 재차 확인하세요.
-              </div>
             </div>
+            <section className="chat-section">
+              <article></article>
+              <article></article>
+              <article></article>
+            </section>
           </div>
         </div>
       </div>

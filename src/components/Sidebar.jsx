@@ -12,145 +12,191 @@ function Sidebar() {
   const user = JSON.parse(localStorage.getItem("user"));
   const { isMenuOpen, setIsMenuOpen, isAlertModalOpen, setIsAlertModalOpen } =
     useChatMenuStore();
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isChatActive, setIsChatActive] = useState(1);
 
+  // 홈 클릭 시 채팅 메뉴 닫기
   const handleChatClick = (chatId) => {
-    navigate(`/chat/${chatId}`);
+    setIsChatOpen(false);
   };
   const [chatList, setChatList] = useState([]);
 
-  // 채팅 목록 조회
-  const fetchChats = async () => {
-    try {
-      const response = await getChatList();
-      setChatList(response);
-    } catch (error) {
-      console.error("Error fetching chats:", error);
-    }
+  // 채팅 메뉴 열기
+  const handleChatOpen = () => {
+    setIsChatOpen((prev) => !prev);
+    navigate(`/chat/${1}`); // 열리고 1번 채팅창으로 이동
   };
-  useEffect(() => {
-    fetchChats();
-  }, []);
 
-  const handleMenuOpen = (chatId) => {
-    // 현재 메뉴가 열려있는 상태라면 닫고, 닫혀있는 상태라면 열기
-    setIsMenuOpen(isMenuOpen === chatId ? false : chatId);
+  const handleChatActive = (chatId) => {
+    setIsChatActive(chatId); // 1 or 2
   };
 
   return (
-    <>
-      {/* 오버레이 - 사이드바 외부 영역 클릭 시 닫힘 */}
-      <div
-        className={`${styles.overlay} ${isOpen ? styles.overlayVisible : ""}`}
-        onClick={toggleSidebar}
-      />
+    <nav className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
+      <header className={styles.header}>
+        <Link to="/">
+          <img src="/white_logo.png" alt="logo" className={styles.logo} />
+        </Link>
+        <button className={styles.closeButton} onClick={toggleSidebar}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            fill="currentColor"
+            className="bi bi-chevron-double-left"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fillRule="evenodd"
+              d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
+            />
+            <path
+              fillRule="evenodd"
+              d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
+            />
+          </svg>
+        </button>
+      </header>
+      <section className={styles.menuList}>
+        <h3 className={styles.title}>메뉴</h3>
 
-      <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
-        <div className={styles.header}>
-          <h3 className={styles.title}>메뉴</h3>
-          <button className={styles.closeButton} onClick={toggleSidebar}>
-            &times;
-          </button>
-        </div>
-        <ul className={styles.chatList}>
-          {chatList.map((chat) => (
-            <li className={`${styles.chatItem} ${styles.chatItemTitle}`} key={chat.id}>
-              <span
+        <div className={styles.menuList_container}>
+          {/* 선택 박스 */}
+          <div
+            className={styles.selectionBox}
+            style={{
+              transform: `translateY(${4 * 24}%)`,
+            }}
+          />
+          {/* 메인 메뉴 */}
+          <ul className={styles.chatList}>
+            <li className={`${styles.chatItem} ${styles.chatItemTitle}`}>
+              <Link
                 className={styles.chatTitle}
-                onClick={() => handleChatClick(chat.id)}
+                to="/"
+                onClick={() => handleChatClick()}
               >
-                {chat.title}
-              </span>
-              <div
-                className={styles.deleteButton}
-                onClick={() => handleMenuOpen(chat.id)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  className="bi bi-three-dots-vertical"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                </svg>
-                {isMenuOpen === chat.id && <ChatMenu />}
-              </div>
+                <img src="/menuIcon/house-fill.svg" alt="home" />
+                <span>홈</span>
+              </Link>
             </li>
-          ))}
-        </ul>
+            <li
+              className={`${styles.chatItem} ${styles.chatItemTitle}`}
+              onClick={() => handleChatOpen()}
+            >
+              <Link to="/chat" className={styles.chatTitle}>
+                <img src="/menuIcon/chat-fill.svg" alt="chat" />
+                <span>채팅</span>
+                <button className={styles.chatItemButton}>
+                  <img
+                    src="/menuIcon/chevron-down_white.svg"
+                    alt="chevron-down"
+                    className={`${styles.chatIcon} ${
+                      isChatOpen ? styles.open : ""
+                    }`}
+                  />
+                </button>
+              </Link>
 
+              <ul
+                className={`${styles.chatItemList} ${
+                  isChatOpen ? styles.open : ""
+                }`}
+              >
+                <li>
+                  <Link
+                    to="/chat/1"
+                    className={isChatActive === 1 ? styles.active : ""}
+                    onClick={(e) => {
+                      handleChatActive(1);
+                      e.stopPropagation();
+                    }}
+                  >
+                    채팅 1
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/chat/2"
+                    className={isChatActive === 2 ? styles.active : ""}
+                    onClick={(e) => {
+                      handleChatActive(2);
+                      e.stopPropagation();
+                    }}
+                  >
+                    채팅 2
+                  </Link>
+                </li>
+              </ul>
+            </li>
+            <li className={`${styles.chatItem} ${styles.chatItemTitle}`}>
+              <Link
+                className={styles.chatTitle}
+                onClick={() => handleChatClick()}
+                to="/mypage"
+              >
+                <img src="/menuIcon/gear-fill.svg" alt="account" />
+                <span>계정 관리</span>
+              </Link>
+            </li>
+            <li className={styles.chatItem}>
+              <Link className={styles.chatTitle} to="/admin">
+                <img src="/menuIcon/person-badge-fill.svg" alt="admin" />
+                관리자 페이지
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* 관리 메뉴 */}
         <ul className={styles.subChatList}>
           <li className={styles.chatItem}>
-            <Link className={styles.subChatTitle} to="/admin">
-              관리자 페이지
-            </Link>
+            {user ? (
+              <button
+                className={styles.chatTitle}
+                onClick={() => {
+                  localStorage.removeItem("userEmail");
+                  localStorage.removeItem("user");
+                  window.location.reload();
+                }}
+              >
+                <img src="/menuIcon/door-closed-fill.svg" alt="logout" />
+                로그아웃
+              </button>
+            ) : (
+              <button
+                className={styles.chatTitle}
+                onClick={() => {
+                  navigate("/login");
+                  toggleSidebar();
+                }}
+              >
+                <img src="/menuIcon/door-open-fill.svg" alt="logout" />
+                로그인
+              </button>
+            )}
           </li>
-          <li className={styles.chatItem}>
-            <Link className={styles.subChatTitle} to="/mypage">
-              개인정보 수정
-            </Link>
-          </li>
+          {!user ? (
+            <li className={styles.chatItem}>
+              <Link className={styles.chatTitle} to="/register">
+                <img src="/menuIcon/person-plus-fill.svg" alt="register" />
+                회원가입
+              </Link>
+            </li>
+          ) : null}
         </ul>
-
-        {user ? (
-          <button
-            className={styles.loginContainer}
-            onClick={() => {
-              localStorage.removeItem("userEmail");
-              localStorage.removeItem("user");
-              window.location.reload();
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              className="bi bi-box-arrow-left"
-              viewBox="0 0 16 16"
-            >
-              <path
-                fillRule="evenodd"
-                d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z"
-              />
-              <path
-                fillRule="evenodd"
-                d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z"
-              />
-            </svg>
-            로그아웃
-          </button>
-        ) : (
-          <button
-            className={styles.loginContainer}
-            onClick={() => {
-              navigate("/login");
-              toggleSidebar();
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              className="bi bi-box-arrow-in-right"
-              viewBox="0 0 16 16"
-            >
-              <path
-                fillRule="evenodd"
-                d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z"
-              />
-              <path
-                fillRule="evenodd"
-                d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"
-              />
-            </svg>
-            로그인
-          </button>
-        )}
-      </div>
-    </>
+      </section>
+      {user ? (
+        <section className={styles.userInfo}>
+          <h3>{user.name}</h3>
+          <p>{user.email}</p>
+        </section>
+      ) : (
+        <section className={styles.userInfo}>
+          <h3>로그인 후 이용해주세요.</h3>
+        </section>
+      )}
+    </nav>
   );
 }
 
