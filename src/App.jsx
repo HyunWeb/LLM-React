@@ -15,6 +15,9 @@ import FindPasswordPage from "./pages/FindPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import RequestCompanyPage from "./pages/RequestCompanyPage";
 import Header from "./components/Header";
+import MypagePage from "./pages/MypagePage";
+import Layout from "./pages/Layout";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   const {
@@ -27,7 +30,6 @@ function App() {
   return (
     <SidebarProvider>
       <Router>
-        <Sidebar />
         {/* 삭제 모달 */}
         {isAlertModalOpen && (
           <Modal>
@@ -45,15 +47,20 @@ function App() {
           <CustomAlert setIsCustomAlertOpen={setIsCustomAlertOpen} />
         )}
         {/* 라우트 */}
-        <Header />
+        {/* <Header /> */}
         <Routes>
-          <Route path="/" element={<MainPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/chat/:chatId" element={<ChatPage />} />
           <Route path="/find-password" element={<FindPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/request-company" element={<RequestCompanyPage />} />
+
+          <Route path="/" element={<Layout />}>
+            <Route index element={<MainPage />} />
+            <Route path="/chat/:chatId" element={<ChatPage />} />
+            <Route path="/request-company" element={<RequestCompanyPage />} />
+            <Route path="/mypage" element={<MypagePage />} />
+            <Route path="/admin" element={<AdminPage />} />
+          </Route>
         </Routes>
       </Router>
     </SidebarProvider>

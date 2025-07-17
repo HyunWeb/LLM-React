@@ -9,12 +9,13 @@
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
-  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
   outline: none;
   margin: 0 auto;
   display: block;
+  margin-top: 20px;
 }
 
 .bodyButton:hover {
   background: #0d4e8a;
-} 
+}

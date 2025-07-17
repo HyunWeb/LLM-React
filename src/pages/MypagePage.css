@@ -1,0 +1,22 @@
+.register-title {
+  margin-bottom: 10px;
+}
+.input-disabled {
+  background: #cdcdcd;
+  cursor: not-allowed;
+}
+.register-divider {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+
+  > input {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.register-form {
+  margin-bottom: 10px;
+}
