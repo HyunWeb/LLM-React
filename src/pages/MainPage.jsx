@@ -1,26 +1,36 @@
 import React, { useEffect, useRef, useState } from "react";
-import Lottie from "lottie-react";
 import "./ChatPage.css";
 import { useNavigate } from "react-router-dom";
 import { newinputTextStore } from "../store/store";
+import ChatInput from "../components/ChatInput";
 
 export default function MainPage() {
-  const [robotAnimationData, setRobotAnimationData] = useState(null);
   const [inputText, setInputText] = useState("");
-  const [messages, setMessages] = useState([]);
+
   const textareaRef = useRef(null);
   const navigate = useNavigate();
-  const { newinputText, setNewInputText, shouldAutoSend, setShouldAutoSend } =
-    newinputTextStore();
+  const { setNewInputText, setShouldAutoSend } = newinputTextStore();
+  const [handleAnimation, setHandleAnimation] = useState(false);
+  const [animationStyle, setAnimationStyle] = useState({});
+  const chatCenterRef = useRef(null);
 
-  // 로봇 애니메이션 로딩
   useEffect(() => {
-    // Dynamically import the Lottie animation data
-    fetch("/lottie_robot.json")
-      .then((response) => response.json())
-      .then((data) => setRobotAnimationData(data))
-      .catch((error) => console.error("Error loading animation:", error));
-  }, []);
+    if (handleAnimation && chatCenterRef.current) {
+      const element = chatCenterRef.current;
+      const rect = element.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // 요소를 화면 하단으로 이동시키기 위한 계산
+      const distanceToBottom = windowHeight - rect.bottom;
+      const margin = 20;
+      const translateY = distanceToBottom - margin;
+
+      setAnimationStyle({
+        transform: `translateY(${translateY}px)`,
+        transition: "transform 0.3s ease-in-out",
+      });
+    }
+  }, [handleAnimation]);
 
   // 로그인 여부 확인
   const isLoggedIn = !!localStorage.getItem("userEmail");
@@ -50,13 +60,16 @@ export default function MainPage() {
   // 메시지 전송 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!inputText.trim()) return;
 
-    // api 요청 : 현재 채팅방 개설 상태확인
-    setNewInputText(inputText);
-    setShouldAutoSend(true);
-    navigate(`/chat/${1}`);
+    setHandleAnimation(true);
+
+    setTimeout(() => {
+      // api 요청 : 현재 채팅방 개설 상태확인
+      setNewInputText(inputText);
+      setShouldAutoSend(true);
+      navigate(`/chat/${1}`);
+    }, 300);
   };
 
   // 키 입력 처리 핸들러
@@ -92,49 +105,34 @@ export default function MainPage() {
       <div className="chat-bg">
         <div className={`chat-container empty-chat`}>
           <div className="initial-layout">
-            <h1 className="chat-title">
+            <h1 className={`chat-title ${handleAnimation ? "fade-in" : ""}`}>
               무엇을 도와드릴까요? <br />
               궁금함 내용을 자유롭게 입력해보세요.
             </h1>
-            <span className="chat-guide">
+            <span className={`chat-guide ${handleAnimation ? "fade-in" : ""}`}>
               AI는 실수를 할 수 있습니다. 중요한 정보는 재차 확인하세요.
             </span>
-            <div className="chat-center initial-chat">
+            <div
+              className={`chat-center initial-chat ${
+                handleAnimation ? "show-down" : ""
+              }`}
+              ref={chatCenterRef}
+              style={handleAnimation ? animationStyle : {}}
+            >
               {/* 초기 화면에서만 보이는 입력 폼 */}
-              <form className="chat-form" onSubmit={handleSubmit}>
-                <textarea
-                  ref={textareaRef}
-                  className="chat-input"
-                  placeholder={
-                    isLoggedIn
-                      ? "무엇이든 입력하세요"
-                      : "채팅을 이용하시려면 로그인이 필요합니다."
-                  }
-                  value={inputText}
-                  onChange={handleTextChange}
-                  onKeyDown={handleKeyDown}
-                  disabled={!isLoggedIn}
-                  rows={1}
-                />
-                <button
-                  className="chat-send"
-                  type="submit"
-                  disabled={!inputText.trim() || !isLoggedIn}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-arrow-right-circle-fill"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z" />
-                  </svg>
-                </button>
-              </form>
+              <ChatInput
+                inputText={inputText}
+                setInputText={setInputText}
+                handleTextChange={handleTextChange}
+                handleKeyDown={handleKeyDown}
+                handleSubmit={handleSubmit}
+                isLoggedIn={isLoggedIn}
+                textareaRef={textareaRef}
+              />
             </div>
-            <section className="chat-section">
+            <section
+              className={`chat-section ${handleAnimation ? "fade-in" : ""}`}
+            >
               <article></article>
               <article></article>
               <article></article>

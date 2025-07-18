@@ -4,7 +4,6 @@
   left: 0; */
   padding: 20px;
   height: 100vh;
-  width: 275px;
   box-sizing: border-box;
   background: black;
   color: #fff;
@@ -14,6 +13,78 @@
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  .title {
+    transition-duration: 300ms;
+    opacity: 1;
+    visibility: visible;
+  }
+  .logo {
+    white-space: nowrap;
+    transition-duration: 300ms;
+  }
+  .chatTitle > span {
+    white-space: nowrap;
+    transition-duration: 100ms;
+    opacity: 1;
+    visibility: visible;
+  }
+  .userInfo {
+    white-space: nowrap;
+    transition-duration: 300ms;
+    overflow: hidden;
+  }
+}
+.sidebar.open {
+  width: 275px;
+  transition: width 300ms ease;
+}
+
+.sidebar.close {
+  width: 90px;
+  transition: width 300ms ease;
+  .header {
+    justify-content: center;
+  }
+  &:hover {
+    .logo {
+      display: none;
+    }
+    .closeButton {
+      display: block;
+    }
+  }
+  .closeButton {
+    display: none;
+    transform: rotate(180deg);
+  }
+
+  .logo {
+    width: 50px;
+  }
+  .logo:hover {
+    visibility: hidden;
+    opacity: 0;
+  }
+  .title {
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .chatTitle > span {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .userInfo {
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    margin: 0;
+  }
 }
 
 .menuList {
@@ -69,6 +140,17 @@
     height: 18px;
   }
 }
+.chatItem > a.active {
+  background: rgb(255, 255, 255);
+  border-radius: 10px;
+  > span {
+    color: #333;
+  }
+}
+.chatItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
 
 .chatIcon {
   transition-duration: 500ms;
@@ -89,7 +171,7 @@
 
   > li > a {
     display: block;
-    padding: 12px 0 12px 25px;
+    padding: 12px 0 12px 20px;
     text-decoration: none;
     color: #a3a3a3;
     font-size: 15px;
@@ -170,7 +252,7 @@
 } */
 
 .closeButton {
-  background: none;
+  background: black;
   border: none;
   color: #fff;
   font-size: 1.5rem;

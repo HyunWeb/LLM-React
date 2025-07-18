@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import Header from "../components/Header";
 import Lottie from "lottie-react";
 import { formatMessagesForAPI, sendMessage } from "../api/chatApi";
@@ -6,6 +6,7 @@ import { newinputTextStore } from "../store/store";
 import "./ChatPage.css";
 import { useParams } from "react-router-dom";
 import { getChatList } from "../api/mainApi";
+import ChatInput from "../components/ChatInput";
 
 // 좋아요/싫어요 아이콘 컴포넌트
 const ThumbUpIcon = () => (
@@ -73,7 +74,7 @@ export default function ChatPage() {
     newinputTextStore();
   const [inputText, setInputText] = useState("");
   const [displayedResponse, setDisplayedResponse] = useState("");
-  const textareaRef2 = useRef(null);
+  const textareaRef = useRef(null);
   const typingSpeedRef = useRef(30); // 타이핑 속도 (ms)
   const sendbuttonRef = useRef(null);
   const { chatId } = useParams();
@@ -110,22 +111,32 @@ export default function ChatPage() {
   }, []);
 
   // textarea 참조가 설정되었을 때 초기 높이 설정
+  // useEffect(() => {
+  //   if (textareaRef.current) {
+  //     adjustTextareaHeight(textareaRef.current);
+  //   }
+  // }, [messages.length]); // 메시지 목록이 변경될 때마다 실행
+
+  // 스크롤 위치 조정
   useEffect(() => {
-    if (textareaRef2.current) {
-      adjustTextareaHeight(textareaRef2.current);
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTo({
+        top: messagesEndRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
-  }, [messages.length]); // 메시지 목록이 변경될 때마다 실행
+  }, [messagesEndRef.current]);
 
   // 로그인 여부 확인
   const isLoggedIn = !!localStorage.getItem("userEmail");
 
-  useEffect(() => {
-    // Dynamically import the Lottie animation data
-    fetch("/lottie_robot.json")
-      .then((response) => response.json())
-      .then((data) => setRobotAnimationData(data))
-      .catch((error) => console.error("Error loading animation:", error));
-  }, []);
+  // useEffect(() => {
+  //   // Dynamically import the Lottie animation data
+  //   fetch("/lottie_robot.json")
+  //     .then((response) => response.json())
+  //     .then((data) => setRobotAnimationData(data))
+  //     .catch((error) => console.error("Error loading animation:", error));
+  // }, []);
 
   // 키 입력 처리 핸들러
   const handleKeyDown = (e) => {
@@ -220,8 +231,6 @@ export default function ChatPage() {
 
     if (!inputText.trim()) return;
 
-    const isFirstMessage = messages.length === 0;
-
     // 사용자 메시지 추가
     const userMessage = {
       text: inputText,
@@ -233,16 +242,29 @@ export default function ChatPage() {
     setInputText("");
     setLoading(true);
 
+    // if (chatCenterRef.current) {
+    //   const element = chatCenterRef.current;
+    //   const elementHeight = element.scrollHeight;
+    //   const windowHeight = window.innerHeight;
+
+    //   if (elementHeight > windowHeight) {
+    //     element.scrollTo({
+    //       top: elementHeight,
+    //       behavior: "smooth",
+    //     });
+    //   }
+    // }
+
     // 첫 메시지인 경우 스크롤 위치 초기화
-    if (isFirstMessage) {
-      window.scrollTo(0, 0);
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "end",
-        });
-      }, 200);
-    }
+    // if (isFirstMessage) {
+    //   window.scrollTo(0, 0);
+    //   setTimeout(() => {
+    //     messagesEndRef.current?.scrollIntoView({
+    //       behavior: "smooth",
+    //       block: "end",
+    //     });
+    //   }, 200);
+    // }
 
     try {
       // API에 메시지 전송
@@ -313,7 +335,12 @@ export default function ChatPage() {
 
         // 타이핑이 완료되면 스크롤 조정
         timeoutId = setTimeout(() => {
-          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          if (messagesEndRef.current) {
+            messagesEndRef.current.scrollTo({
+              top: messagesEndRef.current.scrollHeight,
+              behavior: "smooth",
+            });
+          }
         }, 100);
       }
     }
@@ -361,7 +388,12 @@ export default function ChatPage() {
             displayedResponse.length === fullResponse.length ||
             displayedResponse.length === 1
           ) {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            if (messagesEndRef.current) {
+              messagesEndRef.current.scrollTo({
+                top: messagesEndRef.current.scrollHeight,
+                behavior: "smooth",
+              });
+            }
           }
         }
       }
@@ -369,8 +401,8 @@ export default function ChatPage() {
   }, [displayedResponse, isTyping, fullResponse, messages]);
 
   return (
-    <div>
-      <div className="chat-bg">
+    <div className="chat-page">
+      <div className="chat-bg" ref={messagesEndRef}>
         <div className={`chat-container`}>
           {/* 메시지가 있을 때의 레이아웃 */}
           <div className="chat-center">
@@ -436,47 +468,19 @@ export default function ChatPage() {
                   <div className="message-content typing">생각 중...</div>
                 </div>
               )}
-              <div ref={messagesEndRef} />
             </div>
           </div>
-
-          {/* 하단 고정 영역 */}
-          <div className="chat-bottom">
-            <div className="robot-container">
-              <Lottie
-                animationData={robotAnimationData}
-                className="robot-animation"
-              />
-            </div>
-            <div className="chat-form-container">
-              <form className="chat-form" onSubmit={handleSubmit}>
-                <textarea
-                  ref={textareaRef2}
-                  className="chat-input"
-                  placeholder={
-                    isLoggedIn
-                      ? "무엇이든 입력하세요. "
-                      : "로그인 또는 회원가입 후 채팅을 이용해주세요"
-                  }
-                  value={inputText}
-                  onChange={handleTextChange}
-                  onKeyDown={handleKeyDown}
-                  disabled={loading || !isLoggedIn}
-                  rows={1}
-                />
-                <button
-                  className="chat-send"
-                  type="submit"
-                  disabled={loading || !inputText.trim() || !isLoggedIn}
-                  ref={sendbuttonRef}
-                >
-                  <span className="arrow-up">↑</span>
-                </button>
-              </form>
-              <div className="chat-guide">
-                실수를 할 수 있습니다. 중요한 정보는 재차 확인하세요.
-              </div>
-            </div>
+          <div className="chat-form-container">
+            <ChatInput
+              inputText={inputText}
+              setInputText={setInputText}
+              handleTextChange={handleTextChange}
+              handleKeyDown={handleKeyDown}
+              handleSubmit={handleSubmit}
+              isLoggedIn={isLoggedIn}
+              textareaRef={textareaRef}
+              sendbuttonRef={sendbuttonRef}
+            />
           </div>
         </div>
       </div>

@@ -1,14 +1,14 @@
 .bodyButton {
   width: 100%;
-  background: #1166ae;
-  color: #fff;
+  background: #fff;
+  color: #333;
   border: none;
   border-radius: 16px;
   padding: 16px 0;
   font-size: 1.1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s;
+  transition-duration: 200ms;
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
   outline: none;
   margin: 0 auto;
@@ -17,5 +17,6 @@
 }
 
 .bodyButton:hover {
-  background: #0d4e8a;
+  box-shadow: 0 0 5px rgba(0, 191, 255, 0.704),
+    0 0 10px rgba(137, 43, 226, 0.533), 0 0 15px rgba(255, 0, 255, 0.435);
 }

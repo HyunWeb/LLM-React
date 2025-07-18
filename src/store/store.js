@@ -19,6 +19,8 @@ export const useChatMenuStore = create((set) => ({
   setIsAlertModalOpen: (value) => set({ isAlertModalOpen: value }),
   isEditModalOpen: false,
   setIsEditModalOpen: (value) => set({ isEditModalOpen: value }),
+  isSidebarOpen: false,
+  setIsSidebarOpen: (value) => set({ isSidebarOpen: value }),
 }));
 export const useCustomAlertStore = create((set) => ({
   isCustomAlertOpen: false,

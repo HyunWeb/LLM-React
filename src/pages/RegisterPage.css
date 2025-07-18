@@ -33,7 +33,7 @@
 }
 
 .register-label {
-  color: #b0b0b0;
+  color: #a7a7a7;
   font-size: 0.95rem;
   margin-bottom: 2px;
   margin-left: 2px;
@@ -46,14 +46,14 @@
   border: none;
   border-radius: 8px;
   font-size: 1rem;
-  background: #fff;
-  color: #222;
+  background: #ffffff;
+  color: #333;
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
   outline: none;
 }
 
 .register-input::placeholder {
-  color: #b0b0b0;
+  color: #909090;
 }
 
 .register-link-row {
