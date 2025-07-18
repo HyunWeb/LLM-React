@@ -100,14 +100,8 @@ export default function MypagePage() {
             disabled={!isPasswordReset}
           />
 
-          <BodyButton type="submit">회원가입</BodyButton>
+          <BodyButton type="submit">수정완료</BodyButton>
         </form>
-        <div className="register-link-row">
-          <span>계정을 삭제하시겠습니까?</span>
-          <a className="register-link" href="/login">
-            회원탈퇴
-          </a>
-        </div>
       </div>
     </div>
   );
