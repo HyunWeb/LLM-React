@@ -21,6 +21,9 @@
   box-sizing: border-box;
 }
 .modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   /* 아이콘 */
   div > svg {
     width: 50px;
@@ -32,19 +35,13 @@
   div:first-of-type {
     position: relative;
   }
-  /* 아이콘 배경 */
-  div:first-of-type::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 27px;
-    height: 27px;
-    border-radius: 50%;
-    background-color: #fff;
-  }
 
+  h2 {
+    user-select: none;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
   p {
     font-size: 15px;
     color: #a5a5a5;
@@ -95,8 +92,14 @@
 }
 
 .modal-edit-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   h2 {
     user-select: none;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
   }
   div > svg {
     width: 50px;
@@ -115,5 +118,6 @@
     color: #fff;
     font-size: 15px;
     box-sizing: border-box;
+  
   }
 }

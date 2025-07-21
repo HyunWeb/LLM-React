@@ -7,6 +7,7 @@ import "./ChatPage.css";
 import { useParams } from "react-router-dom";
 import { getChatList } from "../api/mainApi";
 import ChatInput from "../components/ChatInput";
+import ChatMenu from "../components/ChatMenu";
 
 // 좋아요/싫어요 아이콘 컴포넌트
 const ThumbUpIcon = () => (
@@ -64,13 +65,12 @@ export default function ChatPage() {
   const [isTyping, setIsTyping] = useState(false);
   const [fullResponse, setFullResponse] = useState("");
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
-  const [feedbackMessageIndex, setFeedbackMessageIndex] = useState(null);
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [feedbackText, setFeedbackText] = useState("");
+  const [setFeedbackMessageIndex] = useState(null);
+  const [setShowFeedbackModal] = useState(false);
+  const [setFeedbackText] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
-  const [robotAnimationData, setRobotAnimationData] = useState(null);
-  const { newinputText, setNewinputText, shouldAutoSend, setShouldAutoSend } =
+  const { newinputText, shouldAutoSend, setShouldAutoSend } =
     newinputTextStore();
   const [inputText, setInputText] = useState("");
   const [displayedResponse, setDisplayedResponse] = useState("");
@@ -104,18 +104,11 @@ export default function ChatPage() {
 
   useEffect(() => {
     // 환경변수 디버깅
-    console.log("환경변수 확인:", {
-      apiKey: process.env.REACT_APP_OPENAI_API_KEY ? "설정됨" : "설정안됨",
-      allEnvVars: process.env,
-    });
+    // console.log("환경변수 확인:", {
+    //   apiKey: process.env.REACT_APP_OPENAI_API_KEY ? "설정됨" : "설정안됨",
+    //   allEnvVars: process.env,
+    // });
   }, []);
-
-  // textarea 참조가 설정되었을 때 초기 높이 설정
-  // useEffect(() => {
-  //   if (textareaRef.current) {
-  //     adjustTextareaHeight(textareaRef.current);
-  //   }
-  // }, [messages.length]); // 메시지 목록이 변경될 때마다 실행
 
   // 스크롤 위치 조정
   useEffect(() => {
@@ -129,14 +122,6 @@ export default function ChatPage() {
 
   // 로그인 여부 확인
   const isLoggedIn = !!localStorage.getItem("userEmail");
-
-  // useEffect(() => {
-  //   // Dynamically import the Lottie animation data
-  //   fetch("/lottie_robot.json")
-  //     .then((response) => response.json())
-  //     .then((data) => setRobotAnimationData(data))
-  //     .catch((error) => console.error("Error loading animation:", error));
-  // }, []);
 
   // 키 입력 처리 핸들러
   const handleKeyDown = (e) => {
@@ -241,30 +226,6 @@ export default function ChatPage() {
     setMessages(updatedMessages);
     setInputText("");
     setLoading(true);
-
-    // if (chatCenterRef.current) {
-    //   const element = chatCenterRef.current;
-    //   const elementHeight = element.scrollHeight;
-    //   const windowHeight = window.innerHeight;
-
-    //   if (elementHeight > windowHeight) {
-    //     element.scrollTo({
-    //       top: elementHeight,
-    //       behavior: "smooth",
-    //     });
-    //   }
-    // }
-
-    // 첫 메시지인 경우 스크롤 위치 초기화
-    // if (isFirstMessage) {
-    //   window.scrollTo(0, 0);
-    //   setTimeout(() => {
-    //     messagesEndRef.current?.scrollIntoView({
-    //       behavior: "smooth",
-    //       block: "end",
-    //     });
-    //   }, 200);
-    // }
 
     try {
       // API에 메시지 전송
@@ -402,6 +363,7 @@ export default function ChatPage() {
 
   return (
     <div className="chat-page">
+      <ChatMenu />
       <div className="chat-bg" ref={messagesEndRef}>
         <div className={`chat-container`}>
           {/* 메시지가 있을 때의 레이아웃 */}

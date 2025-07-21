@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
 import { useChatMenuStore, useCustomAlertStore } from "../../store/store";
+import { useNavigate } from "react-router-dom";
 
 export default function AlertModal({ setIsAlertModalOpen }) {
   const { setIsCustomAlertOpen, setAlertTitle, setAlertMessage, setAlertType } =
     useCustomAlertStore();
+  const navigate = useNavigate();
 
   // 삭제 버튼 클릭 시
   const handleDelete = () => {
@@ -12,17 +14,20 @@ export default function AlertModal({ setIsAlertModalOpen }) {
     setAlertType("success");
     setAlertTitle("삭제 완료");
     setAlertMessage("채팅창이 삭제되었습니다.");
+    navigate("/");
   };
 
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
         handleDelete();
       }
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, []);
+  }, [handleDelete]);
   return (
     <div className="modal-content">
       <div>

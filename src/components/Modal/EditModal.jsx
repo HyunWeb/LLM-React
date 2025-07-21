@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useCustomAlertStore } from "../../store/store";
 
 export default function EditModal({ setIsEditModalOpen }) {
@@ -6,7 +6,7 @@ export default function EditModal({ setIsEditModalOpen }) {
     useCustomAlertStore();
   const [editInput, setEditInput] = useState("");
 
-  const handleEdit = () => {
+  const handleEdit = useCallback(() => {
     if (editInput === "") {
       setIsCustomAlertOpen(true);
       setAlertTitle("변경 실패");
@@ -19,17 +19,28 @@ export default function EditModal({ setIsEditModalOpen }) {
     setAlertType("success");
     setAlertTitle("변경 완료");
     setAlertMessage("이름이 변경되었습니다.");
-  };
+  }, [
+    editInput,
+    setIsEditModalOpen,
+    setIsCustomAlertOpen,
+    setAlertTitle,
+    setAlertType,
+    setAlertMessage,
+  ]);
 
+  // 엔터키 입력 시 변경
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
         handleEdit();
       }
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, []);
+  }, [handleEdit]);
+
   return (
     <div className="modal-edit-content">
       <div>
@@ -59,6 +70,7 @@ export default function EditModal({ setIsEditModalOpen }) {
         name="edit-input"
         value={editInput}
         onChange={(e) => setEditInput(e.target.value)}
+        autoFocus
       />
       {/* 버튼 */}
       <div className="alert-modal-content-buttons ">
