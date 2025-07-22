@@ -1,0 +1,93 @@
+.chatMenuContainer {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 10px 20px;
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid #4d4d4d;
+  width: 100%;
+  background-color: #2a2a2ae3;
+  z-index: 10;
+}
+.chatMenuContainer h1 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.chatMenuContainer button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.chatMenuContainer button svg {
+  width: 20px;
+  height: 20px;
+  color: #fff;
+}
+.chatMenuButton {
+  position: relative;
+}
+
+.chatMenu {
+  transition: all 100ms ease-in-out;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #333;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+  max-height: 0;
+
+  padding: 0;
+}
+
+.chatMenu li button {
+  background: none;
+  border: none;
+  width: 100%;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  list-style: none;
+  padding: 10px;
+  cursor: pointer;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.chatMenu li button:hover {
+  background-color: #f0f0f0;
+  color: #000;
+  > svg {
+    color: #000;
+  }
+}
+.chatMenu li button svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.chatMenu.open {
+  max-height: 200px; /* 충분한 높이값 설정 */
+  padding: 10px;
+}
+
+.chatMenu.close {
+  max-height: 0;
+  padding: 0;
+}

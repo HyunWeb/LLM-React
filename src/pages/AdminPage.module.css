@@ -1,0 +1,147 @@
+.adminPage {
+  box-sizing: border-box;
+  height: 100vh;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.adminContent {
+  flex: 1;
+  min-height: 0; /* flex item이 overflow-y: auto를 올바르게 상속받게 함 */
+  display: flex;
+  flex-direction: column;
+}
+.contentSection {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.adminHeader {
+  margin-bottom: 30px;
+}
+
+.adminHeader h1 {
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.adminHeader p {
+  font-size: 16px;
+  font-weight: 400;
+  color: #828282;
+}
+
+.adminTabs {
+  margin-bottom: 30px;
+}
+
+.adminTabs ul {
+  display: flex;
+}
+
+.adminTabs ul li button {
+  background-color: transparent;
+  padding: 10px 20px;
+  border: none;
+  font-size: 20px;
+  font-weight: 600;
+  color: #7d7d7d;
+  cursor: pointer;
+}
+
+.adminTabs ul li button.active {
+  color: #fff;
+  border-bottom: 2px solid #3c8aef;
+}
+
+.contentSection h2 {
+  font-size: 30px;
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.approvalCards {
+  background-color: #383838;
+  padding: 40px;
+  border-radius: 16px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  height: 100%;
+  gap: 20px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+/* approvalCards에만 적용하고 싶으면 .approvalCards::-webkit-scrollbar 등으로! */
+.approvalCards::-webkit-scrollbar {
+  width: 12px; /* 스크롤바 너비 */
+  background: #383838; /* 스크롤바 트랙(배경) 색상 */
+  border-radius: 16px; /* 트랙 둥글게 */
+}
+
+.approvalCards::-webkit-scrollbar-thumb {
+  background: #222; /* 스크롤바 색상 */
+  border-radius: 16px; /* 스크롤바 둥글게 */
+  border: 3px solid #383838; /* 트랙과 thumb 사이 여백 효과 */
+}
+
+.approvalCards::-webkit-scrollbar-corner {
+  background: #383838; /* 스크롤바 모서리 */
+}
+
+.approvalCard {
+  background-color: #202020;
+  border: 2px solid #4d4d4d;
+  border-radius: 12px;
+  padding: 25px;
+  max-width: 300px;
+  max-height: 200px;
+  box-sizing: border-box;
+}
+.userInfo h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.userInfo p {
+  font-size: 16px;
+  font-weight: 400;
+  color: #828282;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.userInfo p svg {
+  color: #fff;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.actionButtons button {
+  font-size: 15px;
+  padding: 7px 20px;
+  border-radius: 5px;
+}
+
+.approveBtn {
+  background-color: #fff;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+.rejectBtn {
+  background-color: #3b3b3b;
+  border: 2px solid #575757;
+  color: #fff;
+}
