@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useCustomAlertStore } from "../../store/store";
+import { useChatIdStore, useCustomAlertStore } from "../../store/store";
+import { updateChatSession } from "../../api/mainApi";
+import { useParams } from "react-router-dom";
 
 export default function EditModal({ setIsEditModalOpen }) {
   const { setIsCustomAlertOpen, setAlertTitle, setAlertMessage, setAlertType } =
     useCustomAlertStore();
   const [editInput, setEditInput] = useState("");
+  const { chatId } = useChatIdStore();
 
-  const handleEdit = useCallback(() => {
+  const handleEdit = useCallback(async () => {
     if (editInput === "") {
       setIsCustomAlertOpen(true);
       setAlertTitle("변경 실패");
@@ -14,6 +17,15 @@ export default function EditModal({ setIsEditModalOpen }) {
       setAlertMessage("채팅방 이름을 입력해주세요.");
       return;
     }
+
+    try {
+      const response = await updateChatSession(chatId, editInput);
+      console.log(response);
+      window.location.reload();
+    } catch (error) {
+      console.error("채팅 이름 변경 실패:", error);
+    }
+
     setIsEditModalOpen(false);
     setIsCustomAlertOpen(true);
     setAlertType("success");

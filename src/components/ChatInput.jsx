@@ -28,9 +28,10 @@ export default function ChatInput({
       />
       <button
         className="chat-send"
-        type="submit"
+        type="button"
         disabled={!inputText.trim() || !isLoggedIn}
         ref={sendbuttonRef}
+        onClick={handleSubmit}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

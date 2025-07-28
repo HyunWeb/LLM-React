@@ -1,20 +1,34 @@
 import React, { useEffect } from "react";
-import { useChatMenuStore, useCustomAlertStore } from "../../store/store";
+import {
+  useChatIdStore,
+  useChatMenuStore,
+  useCustomAlertStore,
+} from "../../store/store";
 import { useNavigate } from "react-router-dom";
+import { deleteChatSession } from "../../api/mainApi";
 
 export default function AlertModal({ setIsAlertModalOpen }) {
   const { setIsCustomAlertOpen, setAlertTitle, setAlertMessage, setAlertType } =
     useCustomAlertStore();
   const navigate = useNavigate();
+  const { chatId } = useChatIdStore();
 
   // 삭제 버튼 클릭 시
-  const handleDelete = () => {
+  const handleDelete = async () => {
+    try {
+      const response = await deleteChatSession(chatId);
+      console.log(response);
+    } catch (error) {
+      console.error("채팅 삭제 실패:", error);
+    }
+
     setIsAlertModalOpen(false);
     setIsCustomAlertOpen(true);
     setAlertType("success");
     setAlertTitle("삭제 완료");
     setAlertMessage("채팅창이 삭제되었습니다.");
     navigate("/");
+    window.location.reload();
   };
 
   useEffect(() => {

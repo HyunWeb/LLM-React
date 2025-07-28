@@ -1,67 +1,52 @@
 import api from "./index";
 
-export const getChatList = async (chatId) => {
-  // return await api.get(`/api/chats/${chatId}`);
-  return [
-    {
-      text: "안녕",
-      isUser: true,
-      timestamp: new Date(),
-    },
-    {
-      text: `저는 인공지능 챗봇으로서 사용자들과의 상호작용을 통해 정보를 제공하고 도움을 주는 데 주력하고 있으며, 다양한 주제에 대해 대화를 나누고 사용자들의 궁금증을 해결해 드리기 위해 최선을 다하고 있습니다. 또한 지속적으로 업그레이드되고 발전하기 위해 노력하고 있으며, 사용자들과의 대화를 통해 새로운 지식을 습득하고 정보를 제공하는 것을 즐기고 있습니다. 함께 대화를 나누며 즐거운 시간을 보내고 지식을 공유하는 것을 중요시하고 있습니다.언제든지 제게 질문이나 이야기를 해 주세요!`,
-      isUser: false,
-      timestamp: new Date(),
-      feedback: null,
-      isTyping: true,
-    },
-    {
-      text: "안녕",
-      isUser: true,
-      timestamp: new Date(),
-    },
-    {
-      text: `저는 인공지능 챗봇으로서 사용자들과의 상호작용을 통해 정보를 제공하고 도움을 주는 데 주력하고 있으며, 다양한 주제에 대해 대화를 나누고 사용자들의 궁금증을 해결해 드리기 위해 최선을 다하고 있습니다. 또한 지속적으로 업그레이드되고 발전하기 위해 노력하고 있으며, 사용자들과의 대화를 통해 새로운 지식을 습득하고 정보를 제공하는 것을 즐기고 있습니다. 함께 대화를 나누며 즐거운 시간을 보내고 지식을 공유하는 것을 중요시하고 있습니다.언제든지 제게 질문이나 이야기를 해 주세요!`,
-      isUser: false,
-      timestamp: new Date(),
-      feedback: null,
-      isTyping: true,
-    },
-    {
-      text: "안녕",
-      isUser: true,
-      timestamp: new Date(),
-    },
-    {
-      text: `저는 인공지능 챗봇으로서 사용자들과의 상호작용을 통해 정보를 제공하고 도움을 주는 데 주력하고 있으며, 다양한 주제에 대해 대화를 나누고 사용자들의 궁금증을 해결해 드리기 위해 최선을 다하고 있습니다. 또한 지속적으로 업그레이드되고 발전하기 위해 노력하고 있으며, 사용자들과의 대화를 통해 새로운 지식을 습득하고 정보를 제공하는 것을 즐기고 있습니다. 함께 대화를 나누며 즐거운 시간을 보내고 지식을 공유하는 것을 중요시하고 있습니다.언제든지 제게 질문이나 이야기를 해 주세요!`,
-      isUser: false,
-      timestamp: new Date(),
-      feedback: null,
-      isTyping: true,
-    },
-    {
-      text: "안녕",
-      isUser: true,
-      timestamp: new Date(),
-    },
-    {
-      text: `저는 인공지능 챗봇으로서 사용자들과의 상호작용을 통해 정보를 제공하고 도움을 주는 데 주력하고 있으며, 다양한 주제에 대해 대화를 나누고 사용자들의 궁금증을 해결해 드리기 위해 최선을 다하고 있습니다. 또한 지속적으로 업그레이드되고 발전하기 위해 노력하고 있으며, 사용자들과의 대화를 통해 새로운 지식을 습득하고 정보를 제공하는 것을 즐기고 있습니다. 함께 대화를 나누며 즐거운 시간을 보내고 지식을 공유하는 것을 중요시하고 있습니다.언제든지 제게 질문이나 이야기를 해 주세요!`,
-      isUser: false,
-      timestamp: new Date(),
-      feedback: null,
-      isTyping: true,
-    },
-    {
-      text: "안녕",
-      isUser: true,
-      timestamp: new Date(),
-    },
-    {
-      text: `저는 인공지능 챗봇으로서 사용자들과의 상호작용을 통해 정보를 제공하고 도움을 주는 데 주력하고 있으며, 다양한 주제에 대해 대화를 나누고 사용자들의 궁금증을 해결해 드리기 위해 최선을 다하고 있습니다. 또한 지속적으로 업그레이드되고 발전하기 위해 노력하고 있으며, 사용자들과의 대화를 통해 새로운 지식을 습득하고 정보를 제공하는 것을 즐기고 있습니다. 함께 대화를 나누며 즐거운 시간을 보내고 지식을 공유하는 것을 중요시하고 있습니다.언제든지 제게 질문이나 이야기를 해 주세요!`,
-      isUser: false,
-      timestamp: new Date(),
-      feedback: null,
-      isTyping: true,
-    },
-  ];
+export const getChatList = async (sessionId) => {
+  const response = await api.get(`/api/v1/chat/messages/${sessionId}`);
+  console.log(response);
+  return response.data;
+};
+
+// 채팅 세션 목록 가져오기
+export const getChatSession = async () => {
+  try {
+    const response = await api.get(`/api/v1/chat/sessions`);
+    // 채팅 세션이 없으면 채팅 시작하기 + 버튼 추가
+    if (response.data.sessions.length <= 1) {
+      response.data.sessions.push({
+        id: "new",
+        title: "채팅 시작하기 +",
+      });
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("채팅 세션 목록 가져오기 실패:", error);
+    throw error;
+  }
+};
+
+export const createChatSession = async () => {
+  const response = await api.post(`/api/v1/chat/sessions`, {});
+
+  return response.data;
+};
+
+export const deleteChatSession = async (sessionId) => {
+  const response = await api.delete(`/api/v1/chat/sessions/${sessionId}`);
+  return response.data;
+};
+
+export const updateChatSession = async (sessionId, sessionName) => {
+  const response = await api.put(`/api/v1/chat/sessions/${sessionId}`, {
+    sessionName,
+  });
+  return response.data;
+};
+
+export const sendMessage = async (sessionId, message) => {
+  const response = await api.post(`/api/v1/chat/messages/simple`, {
+    sessionId,
+    message,
+  });
+  return response.data;
 };

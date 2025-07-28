@@ -43,3 +43,8 @@ export const useChatListStore = create((set) => ({
     })),
   updateChatList: (updatedList) => set({ chatList: updatedList }),
 }));
+
+export const useChatIdStore = create((set) => ({
+  chatId: "",
+  setChatId: (id) => set({ chatId: id }),
+}));

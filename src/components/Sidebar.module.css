@@ -140,6 +140,7 @@
     height: 18px;
   }
 }
+.chatItem > button.active,
 .chatItem > a.active {
   background: rgb(255, 255, 255);
   border-radius: 10px;
@@ -147,6 +148,7 @@
     color: #333;
   }
 }
+
 .chatItem:hover {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -169,13 +171,20 @@
   max-height: 0px;
   overflow: hidden;
 
-  > li > a {
+  > li > a,
+  > li > button {
     display: block;
     padding: 12px 0 12px 20px;
     text-decoration: none;
     color: #a3a3a3;
     font-size: 15px;
     font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    text-align: left;
   }
 
   > li > a.active {
