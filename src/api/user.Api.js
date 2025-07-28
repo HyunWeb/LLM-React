@@ -3,13 +3,13 @@ import api from "./index";
 // 허용된 기업 불러오기
 export const getAllowedCompanies = async () => {
   try {
-    // const response = await api.get("/api/user/allowed-companies");
-    // return response.data;
+    const response = await api.get("/api/v1/companies");
+    return response.data;
 
-    return [
-      { id: 1, name: "기관/기업명1" },
-      { id: 2, name: "기관/기업명2" },
-    ];
+    // return [
+    //   { id: 1, name: "기관/기업명1" },
+    //   { id: 2, name: "기관/기업명2" },
+    // ];
   } catch (error) {
     console.error("회사 불러오기 에러:", error);
     throw error;
@@ -18,8 +18,16 @@ export const getAllowedCompanies = async () => {
 
 // 회원가입
 export const registerUser = async (userData) => {
+  const { email, password, passwordConfirm, company, name } = userData;
+
   try {
-    // const response = await api.post("/api/user/register", userData);
+    const response = await api.post("/api/v1/auth/signup", {
+      username: email,
+      password: password,
+      passwordConfirm: passwordConfirm,
+      companyId: company,
+      name: name,
+    });
     // return response.data;
 
     return {
@@ -36,22 +44,18 @@ export const registerUser = async (userData) => {
 
 // 로그인
 export const loginUser = async (userData) => {
+  const { email, password } = userData;
   try {
-    // const response = await api.post("/api/user/login", userData);
-    // const user = response.data;
-    // localStorage.setItem("user", JSON.stringify(user));
+    const response = await api.post("/api/v1/auth/login", {
+      username: email,
+      password: password,
+    });
+    const user = response.data;
+    console.log(user);
+    localStorage.setItem("user", JSON.stringify(user.user));
+    localStorage.setItem("userEmail", user.user.username);
 
-    const response = {
-      id: 1,
-      name: "홍길동",
-      email: "hong@example.com",
-      company: "기관/기업명1",
-    };
-
-    localStorage.setItem("user", JSON.stringify(response));
-    localStorage.setItem("userEmail", response.email);
-
-    return response;
+    return response.data;
   } catch (error) {
     console.error("로그인 에러:", error);
     throw error;

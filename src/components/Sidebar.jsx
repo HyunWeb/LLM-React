@@ -2,15 +2,41 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import { useChatMenuStore } from "../store/store";
+import { createChatSession, getChatSession } from "../api/mainApi";
 
 function Sidebar() {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  // 사용자 정보 가져오기
+  const user = (() => {
+    try {
+      const userData = localStorage.getItem("user");
+      return userData ? JSON.parse(userData) : null;
+    } catch (error) {
+      console.error("사용자 데이터 파싱 오류:", error);
+      return null;
+    }
+  })();
   const { isSidebarOpen, setIsSidebarOpen } = useChatMenuStore();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState("home");
+  const [chatList, setChatList] = useState([]);
   const location = useLocation();
 
+  // 채팅 세션 목록 가져오기
+  useEffect(() => {
+    const fetchChatList = async () => {
+      const response = await getChatSession();
+
+      if (response?.success) {
+        setChatList(response.sessions);
+      } else {
+        console.error("채팅 세션 목록 가져오기 실패:", response);
+      }
+    };
+    fetchChatList();
+  }, []);
+
+  // 현재 경로에 따라 활성화된 메뉴 설정
   useEffect(() => {
     const path = location.pathname;
     if (path === "/") {
@@ -27,7 +53,7 @@ function Sidebar() {
   }, [location.pathname]);
 
   // 채팅 메뉴의 각 채팅방 활성화 상태 체크
-  const [isChatActive, setIsChatActive] = useState(1);
+  const [isChatActive, setIsChatActive] = useState(3);
 
   // 홈 클릭 시 채팅 메뉴 닫기
   const handleChatClick = (chatId) => {
@@ -38,7 +64,6 @@ function Sidebar() {
   // 채팅 메뉴 열기
   const handleChatOpen = () => {
     setIsChatOpen((prev) => !prev);
-    navigate(`/chat/${1}`); // 열리고 1번 채팅창으로 이동
   };
 
   const handleChatActive = (chatId) => {
@@ -47,6 +72,17 @@ function Sidebar() {
 
   const handleSidebarOpen = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleChatCreate = async () => {
+    console.log("채팅 생성");
+    try {
+      const response = await createChatSession();
+      console.log(response);
+      window.location.reload();
+    } catch (error) {
+      console.error("채팅 생성 실패:", error);
+    }
   };
 
   return (
@@ -109,7 +145,7 @@ function Sidebar() {
                 className={`${styles.chatItem} ${styles.chatItemTitle}`}
                 onClick={() => handleChatOpen()}
               >
-                <Link
+                <button
                   to="/chat"
                   className={`${styles.chatTitle} ${
                     activeMenu === "chat" ? styles.active : ""
@@ -122,7 +158,7 @@ function Sidebar() {
                   )}
                   <span>채팅</span>
                   {/* 채팅 메뉴 열기 버튼 */}
-                  <button className={styles.chatItemButton}>
+                  <span className={styles.chatItemButton}>
                     {activeMenu === "chat" ? (
                       <img
                         src="/menuIcon/chevron-down_black.svg"
@@ -140,15 +176,39 @@ function Sidebar() {
                         }`}
                       />
                     )}
-                  </button>
-                </Link>
+                  </span>
+                </button>
 
                 <ul
                   className={`${styles.chatItemList} ${
                     isChatOpen ? styles.open : ""
                   }`}
                 >
-                  <li>
+                  {chatList.map((chat, index) =>
+                    chat.id === "new" ? (
+                      <li key={index}>
+                        <button onClick={() => handleChatCreate()}>
+                          {chat.title}
+                        </button>
+                      </li>
+                    ) : (
+                      <li key={index}>
+                        <Link
+                          to={`/chat/${chat.sessionId}`}
+                          className={
+                            isChatActive === index ? styles.active : ""
+                          }
+                          onClick={(e) => {
+                            handleChatActive(index);
+                            e.stopPropagation();
+                          }}
+                        >
+                          {isSidebarOpen ? index + 1 : chat.sessionName}
+                        </Link>
+                      </li>
+                    )
+                  )}
+                  {/* <li>
                     <Link
                       to="/chat/1"
                       className={isChatActive === 1 ? styles.active : ""}
@@ -171,7 +231,7 @@ function Sidebar() {
                     >
                       {isSidebarOpen ? "2" : "채팅 2"}
                     </Link>
-                  </li>
+                  </li> */}
                 </ul>
               </li>
               <li className={`${styles.chatItem} ${styles.chatItemTitle}`}>
@@ -190,21 +250,24 @@ function Sidebar() {
                   <span>계정 관리</span>
                 </Link>
               </li>
-              <li className={styles.chatItem}>
-                <Link
-                  className={`${styles.chatTitle} ${
-                    activeMenu === "admin" ? styles.active : ""
-                  }`}
-                  to="/admin"
-                >
-                  {activeMenu === "admin" ? (
-                    <img src="/menuIcon/person-badge.svg" alt="admin" />
-                  ) : (
-                    <img src="/menuIcon/person-badge-fill.svg" alt="admin" />
-                  )}
-                  <span>관리자 페이지</span>
-                </Link>
-              </li>
+              {/* 관리자 페이지 메뉴 */}
+              {user.roles && user.roles[0] === "ADMIN" && (
+                <li className={styles.chatItem}>
+                  <Link
+                    className={`${styles.chatTitle} ${
+                      activeMenu === "admin" ? styles.active : ""
+                    }`}
+                    to="/admin"
+                  >
+                    {activeMenu === "admin" ? (
+                      <img src="/menuIcon/person-badge.svg" alt="admin" />
+                    ) : (
+                      <img src="/menuIcon/person-badge-fill.svg" alt="admin" />
+                    )}
+                    <span>관리자 페이지</span>
+                  </Link>
+                </li>
+              )}
             </>
           )}
         </ul>
@@ -249,8 +312,8 @@ function Sidebar() {
       </section>
       {user ? (
         <section className={styles.userInfo}>
-          <h3>{user.name}</h3>
-          <p>{user.email}</p>
+          <h3>{user.fullName}</h3>
+          <p>{user.username}</p>
         </section>
       ) : (
         <section className={styles.userInfo}>

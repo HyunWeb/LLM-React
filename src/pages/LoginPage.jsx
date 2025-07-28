@@ -23,10 +23,10 @@ function LoginPage() {
     } catch (error) {
       console.error("로그인 에러:", error);
     }
-    if (response.id) {
+    if (response?.success) {
       setIsCustomAlertOpen(true);
       setAlertTitle("로그인 성공");
-      setAlertMessage(`${response.name}님 환영합니다.`);
+      setAlertMessage(`${response.user.fullName}님 환영합니다.`);
       setAlertType("success");
       navigate("/");
     } else {

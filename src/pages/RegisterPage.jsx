@@ -21,6 +21,7 @@ function RegisterPage() {
     const fetchAllowedCompanies = async () => {
       try {
         const response = await getAllowedCompanies();
+        console.log(response);
         setAllowedCompanies(response);
       } catch (error) {
         console.error("허용된 기업 불러오기 에러:", error);

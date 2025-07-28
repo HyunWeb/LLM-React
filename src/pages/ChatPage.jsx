@@ -1,11 +1,11 @@
 import React, { use, useEffect, useRef, useState } from "react";
 import Header from "../components/Header";
 import Lottie from "lottie-react";
-import { formatMessagesForAPI, sendMessage } from "../api/chatApi";
-import { newinputTextStore } from "../store/store";
+import { formatMessagesForAPI } from "../api/chatApi";
+import { newinputTextStore, useChatIdStore } from "../store/store";
 import "./ChatPage.css";
 import { useParams } from "react-router-dom";
-import { getChatList } from "../api/mainApi";
+import { getChatList, getChatSession, sendMessage } from "../api/mainApi";
 import ChatInput from "../components/ChatInput";
 import ChatMenu from "../components/ChatMenu";
 
@@ -78,13 +78,27 @@ export default function ChatPage() {
   const typingSpeedRef = useRef(30); // 타이핑 속도 (ms)
   const sendbuttonRef = useRef(null);
   const { chatId } = useParams();
+  const { setChatId } = useChatIdStore();
+
+  useEffect(() => {
+    setChatId(chatId);
+    const fetchChatList = async () => {
+      try {
+        const response = await getChatSession();
+      } catch (error) {
+        console.error("채팅 세션 목록 가져오기 실패:", error);
+      }
+    };
+    fetchChatList();
+  }, []);
 
   // 채팅 데이터 가져오기
   useEffect(() => {
     const fetchChatData = async () => {
       try {
         const response = await getChatList(chatId);
-        setMessages(response);
+        console.log(response.messages);
+        setMessages(response.messages);
       } catch (error) {
         console.error("채팅 데이터 가져오기 실패:", error);
       }
@@ -101,14 +115,6 @@ export default function ChatPage() {
       }, 500);
     }
   }, [shouldAutoSend, newinputText]);
-
-  useEffect(() => {
-    // 환경변수 디버깅
-    // console.log("환경변수 확인:", {
-    //   apiKey: process.env.REACT_APP_OPENAI_API_KEY ? "설정됨" : "설정안됨",
-    //   allEnvVars: process.env,
-    // });
-  }, []);
 
   // 스크롤 위치 조정
   useEffect(() => {
@@ -168,7 +174,7 @@ export default function ChatPage() {
 
   // 메시지 복사 처리
   const handleCopyMessage = (index) => {
-    const text = messages[index].text;
+    const text = messages[index].content;
     navigator.clipboard
       .writeText(text)
       .then(() => {
@@ -211,49 +217,91 @@ export default function ChatPage() {
   };
 
   // 메시지 전송 처리
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
+  //   if (!inputText.trim()) return;
+
+  //   // 사용자 메시지 추가
+  //   const userMessage = {
+  //     sessionId: chatId,
+  //     message: inputText,
+  //   };
+
+  //   setMessages([...messages, inputText]);
+  //   setInputText("");
+  //   setLoading(true);
+
+  //   try {
+  //     // API에 메시지 전송
+  //     // const formattedMessages = formatMessagesForAPI(updatedMessages);
+  //     // const response = await sendMessage(formattedMessages);
+  //     const response = await sendMessage(userMessage);
+  //     console.log(response);
+  //     // 타이핑 효과를 위한 설정
+  //     setFullResponse(response);
+  //     setDisplayedResponse("");
+  //     setIsTyping(true);
+
+  //     // 응답 메시지 추가 (타이핑 애니메이션용 빈 텍스트로 시작)
+  //     setMessages([
+  //       ...messages,
+
+  //       // {
+  //       //   text: "",
+  //       //   isUser: false,
+  //       //   timestamp: new Date(),
+  //       //   feedback: null,
+  //       //   isTyping: true,
+  //       // },
+  //     ]);
+
+  //     setLoading(false);
+  //   } catch (error) {
+  //     alert(error.message || "오류가 발생했습니다.");
+  //     console.error(error);
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
+    console.log("submit");
+    e.preventDefault();
     if (!inputText.trim()) return;
 
-    // 사용자 메시지 추가
-    const userMessage = {
-      text: inputText,
-      isUser: true,
-      timestamp: new Date(),
-    };
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
-    setInputText("");
-    setLoading(true);
-
     try {
-      // API에 메시지 전송
-      const formattedMessages = formatMessagesForAPI(updatedMessages);
-      const response = await sendMessage(formattedMessages);
+      setInputText("");
+      setLoading(true);
+
+      // 사용자 메시지 추가
+      const updatedMessages = [
+        ...messages,
+        { content: inputText, messageType: "USER" },
+      ];
+      setMessages(updatedMessages);
+
+      const response = await sendMessage(chatId, inputText);
 
       // 타이핑 효과를 위한 설정
-      setFullResponse(response);
+      const responseText = response.message.content; // 실제 텍스트 추출
+      setFullResponse(responseText);
       setDisplayedResponse("");
       setIsTyping(true);
 
-      // 응답 메시지 추가 (타이핑 애니메이션용 빈 텍스트로 시작)
+      // 응답 메시지 추가 (기존 메시지 + 응답)
       setMessages([
         ...updatedMessages,
         {
-          text: "",
-          isUser: false,
-          timestamp: new Date(),
-          feedback: null,
+          content: response.message.content,
+          messageType: "BOT",
           isTyping: true,
+          feedback: null,
+          timestamp: new Date(),
         },
       ]);
-
       setLoading(false);
     } catch (error) {
-      alert(error.message || "오류가 발생했습니다.");
-      console.error(error);
-      setLoading(false);
+      console.error("채팅 메시지 전송 실패:", error);
     }
   };
 
@@ -261,7 +309,16 @@ export default function ChatPage() {
   useEffect(() => {
     let timeoutId = null;
 
-    if (isTyping && fullResponse) {
+    console.log("타이핑 효과 상태:", {
+      isTyping,
+      fullResponse,
+      fullResponseType: typeof fullResponse,
+      fullResponseLength: fullResponse?.length,
+      displayedResponse,
+      displayedResponseLength: displayedResponse?.length,
+    });
+
+    if (isTyping && fullResponse && typeof fullResponse === "string") {
       if (displayedResponse.length < fullResponse.length) {
         const randomSpeed = Math.floor(Math.random() * 15) + 15; // 15-30ms 사이로 속도 조정
 
@@ -316,17 +373,25 @@ export default function ChatPage() {
 
   // 타이핑 효과를 위해 메시지 업데이트
   useEffect(() => {
-    if (isTyping && fullResponse && displayedResponse) {
+    if (
+      isTyping &&
+      fullResponse &&
+      displayedResponse &&
+      typeof fullResponse === "string"
+    ) {
       const lastMessageIndex = messages.length - 1;
 
       // 마지막 메시지가 존재하고 AI 메시지인 경우에만 업데이트
-      if (lastMessageIndex >= 0 && !messages[lastMessageIndex].isUser) {
+      if (
+        lastMessageIndex >= 0 &&
+        messages[lastMessageIndex].messageType === "BOT"
+      ) {
         // 현재 표시된 텍스트와 마지막 메시지의 텍스트가 다른 경우에만 업데이트
-        if (messages[lastMessageIndex].text !== displayedResponse) {
+        if (messages[lastMessageIndex].content !== displayedResponse) {
           const updatedMessages = [...messages];
           updatedMessages[lastMessageIndex] = {
             ...updatedMessages[lastMessageIndex],
-            text: displayedResponse,
+            content: displayedResponse,
           };
 
           // 함수형 업데이트를 사용하여 최신 상태 기반으로 업데이트
@@ -339,7 +404,7 @@ export default function ChatPage() {
             // 마지막 메시지의 내용만 업데이트하고 나머지는 그대로 유지
             return prevMessages.map((msg, idx) =>
               idx === lastMessageIndex
-                ? { ...msg, text: displayedResponse }
+                ? { ...msg, content: displayedResponse }
                 : msg
             );
           });
@@ -373,21 +438,21 @@ export default function ChatPage() {
                 <div
                   key={index}
                   className={`message ${
-                    msg.isUser ? "user-message" : "ai-message"
+                    msg.messageType === "USER" ? "user-message" : "ai-message"
                   }`}
                 >
                   <div className="message-content">
-                    <span className="typing-effect">{msg.text}</span>
-                    {!msg.isUser &&
+                    <span className="typing-effect">{msg.content}</span>
+                    {msg.messageType === "BOT" &&
                       isTyping &&
                       index === messages.length - 1 &&
-                      msg.text.length < fullResponse.length && (
+                      msg.content.length < fullResponse.length && (
                         <span className="typing-cursor"></span>
                       )}
                   </div>
 
                   {/* 좋아요/싫어요/복사 버튼 (AI 메시지에만 표시) */}
-                  {!msg.isUser && !isTyping && (
+                  {msg.messageType === "BOT" && !isTyping && (
                     <div className="message-footer">
                       <div className="message-actions">
                         <button

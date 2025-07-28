@@ -1,11 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
 import styles from "./ChatMenu.module.css";
 import AlertModal from "./Modal";
-import { useChatMenuStore } from "../store/store";
+import { useChatIdStore, useChatMenuStore } from "../store/store";
+import { useParams } from "react-router-dom";
 
 export default function ChatMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
+  const { chatId } = useParams();
+  const { setChatId } = useChatIdStore();
+
   const {
     isAlertModalOpen,
     setIsAlertModalOpen,
@@ -16,6 +20,7 @@ export default function ChatMenu() {
   const openAlertModal = () => {
     setIsAlertModalOpen(true);
     setIsEditModalOpen(false);
+    setChatId(chatId);
   };
 
   const openEditModal = () => {

@@ -2,25 +2,40 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL,
+  // 프록시를 사용하므로 상대 경로 사용
+  baseURL:
+    process.env.REACT_APP_NODE_ENV === "development"
+      ? ""
+      : process.env.REACT_APP_BASE_URL,
   headers: {
     "Content-Type": "application/json",
+    Accept: "application/json",
   },
+
   withCredentials: true,
 });
 
-// 세션 스토리지 토큰 인증 처리
-// 요청 인터셉터를 통해 매번 최신 토큰을 동적으로 추가시킨다.
-// api.interceptors.request.use(
-//   (config) => {
-//     const token = sessionStorage.getItem("token");
-//     if (token) {
-//       config.headers.Authorization = `Bearer ${token}`;
-//     }
-//     return config;
-//   },
-//   // 두번째 인자 : 에러발생 시 처리
-//   (error) => Promise.reject(error)
-// );
+// 요청 인터셉터 - 토큰 추가
+api.interceptors.request.use(
+  (config) => {
+    // 쿠키 대신 Authorization 헤더 사용 (백엔드에서 지원하는 경우)
+    const user = localStorage.getItem("user");
+    if (user) {
+      try {
+        const userData = JSON.parse(user);
+        if (userData.token) {
+          config.headers.Authorization = `Bearer ${userData.token}`;
+        }
+      } catch (error) {
+        console.error("토큰 파싱 오류:", error);
+      }
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export default api;
