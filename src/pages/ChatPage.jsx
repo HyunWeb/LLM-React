@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import { getChatList, getChatSession, sendMessage } from "../api/mainApi";
 import ChatInput from "../components/ChatInput";
 import ChatMenu from "../components/ChatMenu";
+import ReactMarkdown from "react-markdown";
 
 // 좋아요/싫어요 아이콘 컴포넌트
 const ThumbUpIcon = () => (
@@ -61,24 +62,47 @@ const CopyIcon = () => (
 );
 
 export default function ChatPage() {
+  // 채팅 메시지 목록
   const [messages, setMessages] = useState([]);
+  // 타이핑 효과 진행 중 여부
   const [isTyping, setIsTyping] = useState(false);
+  // AI 응답 전체 텍스트 (타이핑 효과용)
   const [fullResponse, setFullResponse] = useState("");
+  // 복사된 메시지 인덱스 (복사 완료 표시용)
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
+  // 피드백 모달 관련 상태들
   const [setFeedbackMessageIndex] = useState(null);
   const [setShowFeedbackModal] = useState(false);
   const [setFeedbackText] = useState("");
+  // 메시지 전송 중 로딩 상태
   const [loading, setLoading] = useState(false);
+
+  // 채팅창 별 로딩 상태 관리
+  const [loadingChatIds, setLoadingChatIds] = useState(new Set());
+
+  // 채팅창 스크롤 위치 참조
   const messagesEndRef = useRef(null);
+  // 자동 전송 관련 상태 (전역 스토어)
   const { newinputText, shouldAutoSend, setShouldAutoSend } =
     newinputTextStore();
+  // 사용자 입력 텍스트
   const [inputText, setInputText] = useState("");
+  // 현재 타이핑 효과로 표시되는 텍스트
   const [displayedResponse, setDisplayedResponse] = useState("");
+  // 텍스트 영역 참조 (높이 자동 조절용)
   const textareaRef = useRef(null);
-  const typingSpeedRef = useRef(30); // 타이핑 속도 (ms)
+  // 타이핑 속도 참조 (ms)
+  const typingSpeedRef = useRef(30);
+  // 전송 버튼 참조
   const sendbuttonRef = useRef(null);
+  // URL 파라미터에서 채팅 ID 가져오기
   const { chatId } = useParams();
+  // 채팅 ID 전역 상태 설정
   const { setChatId } = useChatIdStore();
+
+  useEffect(() => {
+    setLoading(loadingChatIds.has(chatId));
+  }, [loadingChatIds, chatId]);
 
   useEffect(() => {
     setChatId(chatId);
@@ -97,8 +121,8 @@ export default function ChatPage() {
     const fetchChatData = async () => {
       try {
         const response = await getChatList(chatId);
-        console.log(response.messages);
         setMessages(response.messages);
+        console.log(response.messages);
       } catch (error) {
         console.error("채팅 데이터 가져오기 실패:", error);
       }
@@ -271,7 +295,8 @@ export default function ChatPage() {
 
     try {
       setInputText("");
-      setLoading(true);
+      // setLoading(true);
+      setLoadingChatIds((prev) => new Set([...prev, chatId]));
 
       // 사용자 메시지 추가
       const updatedMessages = [
@@ -299,7 +324,12 @@ export default function ChatPage() {
           timestamp: new Date(),
         },
       ]);
-      setLoading(false);
+      // setLoading(false);
+      setLoadingChatIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(chatId);
+        return newSet;
+      });
     } catch (error) {
       console.error("채팅 메시지 전송 실패:", error);
     }
@@ -308,15 +338,6 @@ export default function ChatPage() {
   // 타이핑 효과 구현
   useEffect(() => {
     let timeoutId = null;
-
-    console.log("타이핑 효과 상태:", {
-      isTyping,
-      fullResponse,
-      fullResponseType: typeof fullResponse,
-      fullResponseLength: fullResponse?.length,
-      displayedResponse,
-      displayedResponseLength: displayedResponse?.length,
-    });
 
     if (isTyping && fullResponse && typeof fullResponse === "string") {
       if (displayedResponse.length < fullResponse.length) {
@@ -442,7 +463,9 @@ export default function ChatPage() {
                   }`}
                 >
                   <div className="message-content">
-                    <span className="typing-effect">{msg.content}</span>
+                    <span className="typing-effect">
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </span>
                     {msg.messageType === "BOT" &&
                       isTyping &&
                       index === messages.length - 1 &&
@@ -507,6 +530,7 @@ export default function ChatPage() {
               isLoggedIn={isLoggedIn}
               textareaRef={textareaRef}
               sendbuttonRef={sendbuttonRef}
+              loading={loading}
             />
           </div>
         </div>

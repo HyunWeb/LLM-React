@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Sidebar.module.css";
-import { useChatMenuStore } from "../store/store";
+import {
+  useChatListLoadingStore,
+  useChatListNameStore,
+  useChatMenuStore,
+} from "../store/store";
 import { createChatSession, getChatSession } from "../api/mainApi";
+import { useChatCreation } from "../hook/useChatCreation";
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -21,20 +26,38 @@ function Sidebar() {
   const [activeMenu, setActiveMenu] = useState("home");
   const [chatList, setChatList] = useState([]);
   const location = useLocation();
+  const { setChatListName } = useChatListNameStore();
+  const { createChat, isCreating, error } = useChatCreation();
+  const { chatListLoading } = useChatListLoadingStore();
+
+  const chatListName = useMemo(() => {
+    const ChatListName = {};
+    // map은 새로운 배열을 반환하므로 forEach 사용
+    chatList.forEach((chat) => {
+      ChatListName[chat.sessionId] = chat.sessionName;
+    });
+    return ChatListName;
+  }, [chatList]);
+
+  // 채팅 목록 이름 설정
+  useEffect(() => {
+    setChatListName(chatListName);
+  }, [chatListName]);
 
   // 채팅 세션 목록 가져오기
   useEffect(() => {
+    // 로그인 상태가 아니면 채팅 세션 목록 가져오지 않음
+    if (!user) return;
+
     const fetchChatList = async () => {
       const response = await getChatSession();
 
       if (response?.success) {
         setChatList(response.sessions);
-      } else {
-        console.error("채팅 세션 목록 가져오기 실패:", response);
       }
     };
     fetchChatList();
-  }, []);
+  }, [chatListLoading]);
 
   // 현재 경로에 따라 활성화된 메뉴 설정
   useEffect(() => {
@@ -59,30 +82,26 @@ function Sidebar() {
   const handleChatClick = (chatId) => {
     setIsChatOpen(false);
   };
-  // const [chatList, setChatList] = useState([]);
 
   // 채팅 메뉴 열기
-  const handleChatOpen = () => {
+  const handleChatOpen = useCallback(() => {
     setIsChatOpen((prev) => !prev);
-  };
+  }, []);
 
-  const handleChatActive = (chatId) => {
+  // 채팅 메뉴 활성화
+  const handleChatActive = useCallback((chatId) => {
     setIsChatActive(chatId); // 1 or 2
-  };
+  }, []);
 
-  const handleSidebarOpen = () => {
+  // 사이드바 열기
+  const handleSidebarOpen = useCallback(() => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
+  }, [isSidebarOpen]);
 
-  const handleChatCreate = async () => {
-    console.log("채팅 생성");
-    try {
-      const response = await createChatSession();
-      console.log(response);
-      window.location.reload();
-    } catch (error) {
-      console.error("채팅 생성 실패:", error);
-    }
+  // 채팅 생성
+  const handleChatCreate = () => {
+    // 채팅 생성 훅 호출
+    createChat();
   };
 
   return (
@@ -208,30 +227,6 @@ function Sidebar() {
                       </li>
                     )
                   )}
-                  {/* <li>
-                    <Link
-                      to="/chat/1"
-                      className={isChatActive === 1 ? styles.active : ""}
-                      onClick={(e) => {
-                        handleChatActive(1);
-                        e.stopPropagation();
-                      }}
-                    >
-                      {isSidebarOpen ? "1" : "채팅 1"}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/chat/2"
-                      className={isChatActive === 2 ? styles.active : ""}
-                      onClick={(e) => {
-                        handleChatActive(2);
-                        e.stopPropagation();
-                      }}
-                    >
-                      {isSidebarOpen ? "2" : "채팅 2"}
-                    </Link>
-                  </li> */}
                 </ul>
               </li>
               <li className={`${styles.chatItem} ${styles.chatItemTitle}`}>

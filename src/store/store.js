@@ -48,3 +48,13 @@ export const useChatIdStore = create((set) => ({
   chatId: "",
   setChatId: (id) => set({ chatId: id }),
 }));
+
+export const useChatListNameStore = create((set) => ({
+  chatListName: [],
+  setChatListName: (name) => set({ chatListName: name }),
+}));
+
+export const useChatListLoadingStore = create((set) => ({
+  chatListLoading: true,
+  setChatListLoading: (loading) => set({ chatListLoading: loading }),
+}));

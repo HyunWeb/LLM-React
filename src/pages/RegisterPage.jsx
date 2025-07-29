@@ -21,8 +21,8 @@ function RegisterPage() {
     const fetchAllowedCompanies = async () => {
       try {
         const response = await getAllowedCompanies();
-        console.log(response);
-        setAllowedCompanies(response);
+
+        setAllowedCompanies(response.companies);
       } catch (error) {
         console.error("허용된 기업 불러오기 에러:", error);
       }
@@ -30,9 +30,24 @@ function RegisterPage() {
     fetchAllowedCompanies();
   }, []);
 
+  // 회원가입 요청
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userData = { email, password, passwordConfirm, company, name };
+    if (password !== passwordConfirm) {
+      setIsCustomAlertOpen(true);
+      setAlertTitle("회원가입 실패");
+      setAlertMessage("비밀번호가 일치하지 않습니다.");
+      setAlertType("error");
+      return;
+    }
+
+    const userData = {
+      email,
+      password,
+      passwordConfirm,
+      company,
+      name,
+    };
     let response;
     try {
       response = await registerUser(userData);
@@ -40,18 +55,20 @@ function RegisterPage() {
     } catch (error) {
       console.error("회원가입 에러:", error);
     }
-    if (response.id) {
-      setIsCustomAlertOpen(true);
-      setAlertTitle("회원가입 성공");
-      setAlertMessage("회원가입이 완료되었습니다.");
-      setAlertType("success");
-      navigate("/");
-    } else {
-      setIsCustomAlertOpen(true);
-      setAlertTitle("회원가입 실패");
-      setAlertMessage("회원가입에 실패했습니다.");
-      setAlertType("error");
-    }
+
+    console.log(response);
+    // if (response.id) {
+    //   setIsCustomAlertOpen(true);
+    //   setAlertTitle("회원가입 성공");
+    //   setAlertMessage("회원가입이 완료되었습니다.");
+    //   setAlertType("success");
+    //   navigate("/");
+    // } else {
+    //   setIsCustomAlertOpen(true);
+    //   setAlertTitle("회원가입 실패");
+    //   setAlertMessage("회원가입에 실패했습니다.");
+    //   setAlertType("error");
+    // }
   };
 
   return (
@@ -76,6 +93,7 @@ function RegisterPage() {
             required
             onChange={(e) => setPassword(e.target.value)}
             value={password}
+            minLength={8}
           />
           <label className="register-label">비밀번호 확인 *</label>
           <input
@@ -95,8 +113,14 @@ function RegisterPage() {
           >
             <option value="">기관/기업명</option>
             {allowedCompanies.map((company) => (
-              <option key={company.id} value={company.name}>
-                {company.name}
+              <option
+                key={company.id}
+                value={company.id}
+                disabled={
+                  company.companyName === "현재 등록된 기업이 없습니다."
+                }
+              >
+                {company.companyName}
               </option>
             ))}
           </select>

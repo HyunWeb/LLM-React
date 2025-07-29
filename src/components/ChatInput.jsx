@@ -9,6 +9,7 @@ export default function ChatInput({
   isLoggedIn,
   textareaRef,
   sendbuttonRef,
+  loading,
 }) {
   return (
     <form className="chat-form" onSubmit={handleSubmit}>
@@ -23,7 +24,7 @@ export default function ChatInput({
         value={inputText}
         onChange={handleTextChange}
         onKeyDown={handleKeyDown}
-        disabled={!isLoggedIn}
+        disabled={!isLoggedIn || loading}
         rows={1}
       />
       <button
