@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import BodyButton from "../components/BodyButton";
 import "./LoginPage.css";
 import { loginUser } from "../api/user.Api";
-import { useCustomAlertStore } from "../store/store";
+import { useChatListLoadingStore, useCustomAlertStore } from "../store/store";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,6 +12,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const { setIsCustomAlertOpen, setAlertTitle, setAlertMessage, setAlertType } =
     useCustomAlertStore();
+  const { setChatListLoading, chatListLoading } = useChatListLoadingStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +30,7 @@ function LoginPage() {
       setAlertMessage(`${response.user.fullName}님 환영합니다.`);
       setAlertType("success");
       navigate("/");
-      window.location.reload();
+      setChatListLoading(!chatListLoading);
     } else {
       setIsCustomAlertOpen(true);
       setAlertTitle("로그인 실패");
