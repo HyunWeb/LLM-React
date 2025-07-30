@@ -21,7 +21,15 @@ export const useChatMenuStore = create((set) => ({
   setIsEditModalOpen: (value) => set({ isEditModalOpen: value }),
   isSidebarOpen: false,
   setIsSidebarOpen: (value) => set({ isSidebarOpen: value }),
+
+  isFeedbackModalOpen: false,
+  setIsFeedbackModalOpen: (value) => set({ isFeedbackModalOpen: value }),
+  feedbackMessageIndex: null,
+  setFeedbackMessageIndex: (index) => set({ feedbackMessageIndex: index }),
+  feedbackText: "",
+  setFeedbackText: (text) => set({ feedbackText: text }),
 }));
+
 export const useCustomAlertStore = create((set) => ({
   isCustomAlertOpen: false,
   setIsCustomAlertOpen: (value) => set({ isCustomAlertOpen: value }),
@@ -47,4 +55,14 @@ export const useChatListStore = create((set) => ({
 export const useChatIdStore = create((set) => ({
   chatId: "",
   setChatId: (id) => set({ chatId: id }),
+}));
+
+export const useChatListNameStore = create((set) => ({
+  chatListName: [],
+  setChatListName: (name) => set({ chatListName: name }),
+}));
+
+export const useChatListLoadingStore = create((set) => ({
+  chatListLoading: true,
+  setChatListLoading: (loading) => set({ chatListLoading: loading }),
 }));

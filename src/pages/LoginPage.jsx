@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import BodyButton from "../components/BodyButton";
 import "./LoginPage.css";
 import { loginUser } from "../api/user.Api";
-import { useCustomAlertStore } from "../store/store";
+import { useChatListLoadingStore, useCustomAlertStore } from "../store/store";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,6 +12,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const { setIsCustomAlertOpen, setAlertTitle, setAlertMessage, setAlertType } =
     useCustomAlertStore();
+  const { setChatListLoading, chatListLoading } = useChatListLoadingStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,23 +30,13 @@ function LoginPage() {
       setAlertMessage(`${response.user.fullName}님 환영합니다.`);
       setAlertType("success");
       navigate("/");
+      setChatListLoading(!chatListLoading);
     } else {
       setIsCustomAlertOpen(true);
       setAlertTitle("로그인 실패");
       setAlertMessage("로그인에 실패했습니다.");
       setAlertType("error");
     }
-
-    // 인수인계 코드
-    // const envEmail = process.env.REACT_APP_USER_EMAIL;
-    // const envPassword = process.env.REACT_APP_USER_PASSWORD;
-    // if (email === envEmail && password === envPassword) {
-    //   localStorage.setItem("userEmail", email);
-    //   setError("");
-    //   navigate("/");
-    // } else {
-    //   setError("이메일 또는 비밀번호가 올바르지 않습니다.");
-    // }
   };
 
   return (

@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import styles from "./ChatMenu.module.css";
 import AlertModal from "./Modal";
-import { useChatIdStore, useChatMenuStore } from "../store/store";
+import {
+  useChatIdStore,
+  useChatListNameStore,
+  useChatMenuStore,
+} from "../store/store";
 import { useParams } from "react-router-dom";
 
 export default function ChatMenu() {
@@ -9,6 +13,8 @@ export default function ChatMenu() {
   const menuRef = useRef(null);
   const { chatId } = useParams();
   const { setChatId } = useChatIdStore();
+  const { chatListName } = useChatListNameStore();
+  const { setIsFeedbackModalOpen } = useChatMenuStore();
 
   const {
     isAlertModalOpen,
@@ -20,12 +26,14 @@ export default function ChatMenu() {
   const openAlertModal = () => {
     setIsAlertModalOpen(true);
     setIsEditModalOpen(false);
+    setIsFeedbackModalOpen(false);
     setChatId(chatId);
   };
 
   const openEditModal = () => {
     setIsEditModalOpen(true);
     setIsAlertModalOpen(false);
+    setIsFeedbackModalOpen(false);
   };
 
   // 메뉴 밖 클릭 시 메뉴 닫기
@@ -47,7 +55,7 @@ export default function ChatMenu() {
 
   return (
     <div className={styles.chatMenuContainer}>
-      <h1>ChatMenu</h1>
+      <h1>{chatListName[chatId]}</h1>
       <div className={styles.chatMenuButton} ref={menuRef}>
         <button onClick={() => setIsOpen(!isOpen)}>
           <svg

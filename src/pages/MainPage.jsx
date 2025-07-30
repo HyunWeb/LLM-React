@@ -1,8 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./ChatPage.css";
 import { useNavigate } from "react-router-dom";
-import { newinputTextStore } from "../store/store";
+import {
+  newinputTextStore,
+  useChatIdStore,
+  useChatListLoadingStore,
+} from "../store/store";
 import ChatInput from "../components/ChatInput";
+import { getChatSession } from "../api/mainApi";
+import { useChatCreation } from "../hook/useChatCreation";
 
 export default function MainPage() {
   const [inputText, setInputText] = useState("");
@@ -13,6 +19,24 @@ export default function MainPage() {
   const [handleAnimation, setHandleAnimation] = useState(false);
   const [animationStyle, setAnimationStyle] = useState({});
   const chatCenterRef = useRef(null);
+  const [firstChatId, setFirstChatId] = useState("");
+  const { createChat, isCreating, error } = useChatCreation();
+  const { setChatListLoading, chatListLoading } = useChatListLoadingStore();
+
+  // 채팅 세션 목록 가져오기
+  useEffect(() => {
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) return;
+    const fetchChatList = async () => {
+      try {
+        const response = await getChatSession();
+        setFirstChatId(response.sessions[0].sessionId);
+      } catch (error) {
+        console.error("채팅 세션 목록 가져오기 실패:", error);
+      }
+    };
+    fetchChatList();
+  }, []);
 
   useEffect(() => {
     if (handleAnimation && chatCenterRef.current) {
@@ -64,12 +88,21 @@ export default function MainPage() {
 
     setHandleAnimation(true);
 
+    let targetChatId = firstChatId;
+
+    if (firstChatId === "-1") {
+      const response = await createChat();
+
+      targetChatId = response.session.sessionId; // 응답에서 직접 가져오기
+      setFirstChatId(response.session.sessionId);
+    }
+
     setTimeout(() => {
-      // api 요청 : 현재 채팅방 개설 상태확인
       setNewInputText(inputText);
       setShouldAutoSend(true);
-      navigate(`/chat/${1}`);
-    }, 300);
+      navigate(`/chat/${targetChatId}`); // 업데이트된 값 사용
+      setChatListLoading(!chatListLoading);
+    }, 1000);
   };
 
   // 키 입력 처리 핸들러

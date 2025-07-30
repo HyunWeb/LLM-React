@@ -1,26 +1,53 @@
 import React from "react";
 import StatusLabel from "../../components/StatusLabel";
 import styles from "./MemberTable.module.css";
-export default function MemberTBody() {
+import { approveMember, rejectMember, suspendMember } from "../../api/adminApi";
+
+export default function MemberTBody({ member, index }) {
+  const handleApprove = async () => {
+    console.log("승인");
+    const response = await approveMember(member.userId);
+    console.log(response);
+  };
+
+  const handleSuspend = async () => {
+    console.log("탈퇴");
+    const response = await suspendMember(member.userId);
+    console.log(response);
+  };
   return (
-    <ul className={styles.tableBodyItem}>
-      <li>
-        <input type="checkbox" />
-      </li>
-      <li>01</li>
-      <li>홍길동</li>
-      <li>hong@example.com</li>
-      <li>기관/기업명1</li>
-      <li>2021-01-01</li>
-      <li>
-        <StatusLabel />
-      </li>
-      <li>
-        <div>
-          <button>승인</button>
-          <button>탈퇴</button>
+    <div className={styles.tableRow}>
+      <div className={styles.tableCell}>{index + 1}</div>
+      <div className={styles.tableCell}>{member.username}</div>
+      <div className={styles.tableCell}>{member.companyName}</div>
+      <div className={styles.tableCell}>{member.updatedAt.split("T")[0]}</div>
+      <div className={styles.tableCell}>
+        <StatusLabel status={member.status} />
+      </div>
+      <div className={styles.tableCell}>
+        <div className={styles.buttonContainer}>
+          <button
+            className={styles.approveButton + " " + styles.button}
+            disabled={
+              member.status === "APPROVED" || member.status === "WAITING"
+            }
+            onClick={handleApprove}
+          >
+            승인
+          </button>
+          <button
+            className={styles.rejectButton + " " + styles.button}
+            disabled={
+              member.status === "REJECTED" ||
+              member.status === "WAITING" ||
+              member.status === "WITHDRAWN"
+            }
+            onClick={handleSuspend}
+          >
+            탈퇴
+          </button>
         </div>
-      </li>
-    </ul>
+      </div>
+    </div>
   );
 }

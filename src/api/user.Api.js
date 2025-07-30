@@ -4,12 +4,15 @@ import api from "./index";
 export const getAllowedCompanies = async () => {
   try {
     const response = await api.get("/api/v1/companies");
-    return response.data;
 
-    // return [
-    //   { id: 1, name: "기관/기업명1" },
-    //   { id: 2, name: "기관/기업명2" },
-    // ];
+    // 현재 등록된 기업이 없으면 추가
+    if (response.data.companies.length === 0) {
+      response.data.companies.push({
+        id: 1,
+        companyName: "현재 등록된 기업이 없습니다.",
+      });
+    }
+    return response.data;
   } catch (error) {
     console.error("회사 불러오기 에러:", error);
     throw error;
@@ -26,16 +29,9 @@ export const registerUser = async (userData) => {
       password: password,
       passwordConfirm: passwordConfirm,
       companyId: company,
-      name: name,
+      fullName: name,
     });
-    // return response.data;
-
-    return {
-      id: 1,
-      name: "홍길동",
-      email: "hong@example.com",
-      company: "기관/기업명1",
-    };
+    return response.data;
   } catch (error) {
     console.error("회원가입 에러:", error);
     throw error;
@@ -84,14 +80,13 @@ export const requestCompany = async (
   job
 ) => {
   try {
-    // const response = await api.post("/api/user/request-company", {
-    //   companyName,
-    //   businessNumber,
-    //   companyNumber,
-    //   job,
-    // });
-    // return response.data;
-    return { status: 200 };
+    const response = await api.post("/api/v1/companies", {
+      companyName,
+      businessNumber,
+      companyNumber,
+      job,
+    });
+    return response.data;
   } catch (error) {
     console.error("기관/기업명 추가 요청 에러:", error);
     throw error;

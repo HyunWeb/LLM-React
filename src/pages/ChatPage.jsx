@@ -1,13 +1,19 @@
 import React, { use, useEffect, useRef, useState } from "react";
 import Header from "../components/Header";
 import Lottie from "lottie-react";
-import { formatMessagesForAPI } from "../api/chatApi";
-import { newinputTextStore, useChatIdStore } from "../store/store";
+import { formatMessagesForAPI, sendFeedback } from "../api/chatApi";
+import {
+  newinputTextStore,
+  useChatIdStore,
+  useChatMenuStore,
+  useCustomAlertStore,
+} from "../store/store";
 import "./ChatPage.css";
 import { useParams } from "react-router-dom";
 import { getChatList, getChatSession, sendMessage } from "../api/mainApi";
 import ChatInput from "../components/ChatInput";
 import ChatMenu from "../components/ChatMenu";
+import ReactMarkdown from "react-markdown";
 
 // 좋아요/싫어요 아이콘 컴포넌트
 const ThumbUpIcon = () => (
@@ -61,24 +67,59 @@ const CopyIcon = () => (
 );
 
 export default function ChatPage() {
+  // 채팅 메시지 목록
   const [messages, setMessages] = useState([]);
+  // 타이핑 효과 진행 중 여부
   const [isTyping, setIsTyping] = useState(false);
+  // AI 응답 전체 텍스트 (타이핑 효과용)
   const [fullResponse, setFullResponse] = useState("");
+  // 복사된 메시지 인덱스 (복사 완료 표시용)
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
-  const [setFeedbackMessageIndex] = useState(null);
-  const [setShowFeedbackModal] = useState(false);
-  const [setFeedbackText] = useState("");
+  // 피드백 모달 관련 상태들
+  // const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  // 메시지 전송 중 로딩 상태
   const [loading, setLoading] = useState(false);
+
+  // 채팅창 별 로딩 상태 관리
+  const [loadingChatIds, setLoadingChatIds] = useState(new Set());
+
+  // 채팅창 스크롤 위치 참조
   const messagesEndRef = useRef(null);
+  // 자동 전송 관련 상태 (전역 스토어)
   const { newinputText, shouldAutoSend, setShouldAutoSend } =
     newinputTextStore();
+  // 사용자 입력 텍스트
   const [inputText, setInputText] = useState("");
+  // 현재 타이핑 효과로 표시되는 텍스트
   const [displayedResponse, setDisplayedResponse] = useState("");
+  // 텍스트 영역 참조 (높이 자동 조절용)
   const textareaRef = useRef(null);
-  const typingSpeedRef = useRef(30); // 타이핑 속도 (ms)
+  // 타이핑 속도 참조 (ms)
+  const typingSpeedRef = useRef(30);
+  // 전송 버튼 참조
   const sendbuttonRef = useRef(null);
+  // URL 파라미터에서 채팅 ID 가져오기
   const { chatId } = useParams();
+  // 채팅 ID 전역 상태 설정
   const { setChatId } = useChatIdStore();
+
+  const {
+    isFeedbackModalOpen,
+    setIsFeedbackModalOpen,
+    feedbackMessageIndex,
+    setFeedbackMessageIndex,
+    feedbackText,
+    setFeedbackText,
+    setIsAlertModalOpen,
+    setIsEditModalOpen,
+  } = useChatMenuStore();
+
+  const { setIsCustomAlertOpen, setAlertTitle, setAlertMessage, setAlertType } =
+    useCustomAlertStore();
+
+  useEffect(() => {
+    setLoading(loadingChatIds.has(chatId));
+  }, [loadingChatIds, chatId]);
 
   useEffect(() => {
     setChatId(chatId);
@@ -97,7 +138,6 @@ export default function ChatPage() {
     const fetchChatData = async () => {
       try {
         const response = await getChatList(chatId);
-        console.log(response.messages);
         setMessages(response.messages);
       } catch (error) {
         console.error("채팅 데이터 가져오기 실패:", error);
@@ -193,85 +233,52 @@ export default function ChatPage() {
   };
 
   // 좋아요/싫어요 처리
-  const handleFeedback = (index, type) => {
+  const handleFeedback = async (index, type, messageId) => {
     const newMessages = [...messages];
 
     // 싫어요 버튼을 누른 경우 모달창 표시
-    if (type === "dislike") {
-      setFeedbackMessageIndex(index);
-      setShowFeedbackModal(true);
+    if (type === "BAD") {
+      setFeedbackMessageIndex(messageId);
+      setIsAlertModalOpen(false);
+      setIsEditModalOpen(false);
+      setIsFeedbackModalOpen(true);
       setFeedbackText(""); // 피드백 텍스트 초기화
+
       return;
-    }
+    } else if (type === "GOOD") {
+      // 이미 같은 버튼이 선택된 경우 선택 해제
+      if (newMessages[index].feedback === type) {
+        newMessages[index].feedback = null;
+      }
+      // 다른 버튼이 선택된 경우 기존 선택 해제하고 새로운 선택
+      else {
+        newMessages[index].feedback = type;
+      }
 
-    // 이미 같은 버튼이 선택된 경우 선택 해제
-    if (newMessages[index].feedback === type) {
-      newMessages[index].feedback = null;
-    }
-    // 다른 버튼이 선택된 경우 기존 선택 해제하고 새로운 선택
-    else {
-      newMessages[index].feedback = type;
-    }
+      // 좋아요 전송
+      const feedback = {
+        messageId: messageId,
+        feedbackType: type,
+      };
 
-    setMessages(newMessages);
+      const response = await sendFeedback(feedback);
+      if (response.success) {
+        setMessages(newMessages);
+        setIsCustomAlertOpen(true);
+        setAlertTitle("피드백 전송 완료");
+        setAlertMessage("피드백이 전송되었습니다.");
+        setAlertType("success");
+      }
+    }
   };
 
-  // 메시지 전송 처리
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   if (!inputText.trim()) return;
-
-  //   // 사용자 메시지 추가
-  //   const userMessage = {
-  //     sessionId: chatId,
-  //     message: inputText,
-  //   };
-
-  //   setMessages([...messages, inputText]);
-  //   setInputText("");
-  //   setLoading(true);
-
-  //   try {
-  //     // API에 메시지 전송
-  //     // const formattedMessages = formatMessagesForAPI(updatedMessages);
-  //     // const response = await sendMessage(formattedMessages);
-  //     const response = await sendMessage(userMessage);
-  //     console.log(response);
-  //     // 타이핑 효과를 위한 설정
-  //     setFullResponse(response);
-  //     setDisplayedResponse("");
-  //     setIsTyping(true);
-
-  //     // 응답 메시지 추가 (타이핑 애니메이션용 빈 텍스트로 시작)
-  //     setMessages([
-  //       ...messages,
-
-  //       // {
-  //       //   text: "",
-  //       //   isUser: false,
-  //       //   timestamp: new Date(),
-  //       //   feedback: null,
-  //       //   isTyping: true,
-  //       // },
-  //     ]);
-
-  //     setLoading(false);
-  //   } catch (error) {
-  //     alert(error.message || "오류가 발생했습니다.");
-  //     console.error(error);
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
-    console.log("submit");
     e.preventDefault();
     if (!inputText.trim()) return;
 
     try {
       setInputText("");
-      setLoading(true);
+      setLoadingChatIds((prev) => new Set([...prev, chatId]));
 
       // 사용자 메시지 추가
       const updatedMessages = [
@@ -299,7 +306,12 @@ export default function ChatPage() {
           timestamp: new Date(),
         },
       ]);
-      setLoading(false);
+      // setLoading(false);
+      setLoadingChatIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(chatId);
+        return newSet;
+      });
     } catch (error) {
       console.error("채팅 메시지 전송 실패:", error);
     }
@@ -308,15 +320,6 @@ export default function ChatPage() {
   // 타이핑 효과 구현
   useEffect(() => {
     let timeoutId = null;
-
-    console.log("타이핑 효과 상태:", {
-      isTyping,
-      fullResponse,
-      fullResponseType: typeof fullResponse,
-      fullResponseLength: fullResponse?.length,
-      displayedResponse,
-      displayedResponseLength: displayedResponse?.length,
-    });
 
     if (isTyping && fullResponse && typeof fullResponse === "string") {
       if (displayedResponse.length < fullResponse.length) {
@@ -442,7 +445,9 @@ export default function ChatPage() {
                   }`}
                 >
                   <div className="message-content">
-                    <span className="typing-effect">{msg.content}</span>
+                    <span className="typing-effect">
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </span>
                     {msg.messageType === "BOT" &&
                       isTyping &&
                       index === messages.length - 1 &&
@@ -469,18 +474,18 @@ export default function ChatPage() {
                         </button>
                         <button
                           className={`action-button ${
-                            msg.feedback === "like" ? "active" : ""
+                            msg.feedback === "GOOD" ? "active" : ""
                           }`}
-                          onClick={() => handleFeedback(index, "like")}
+                          onClick={() => handleFeedback(index, "GOOD", msg.id)}
                           aria-label="좋아요"
                         >
                           <ThumbUpIcon />
                         </button>
                         <button
                           className={`action-button dislike ${
-                            msg.feedback === "dislike" ? "active" : ""
+                            msg.feedback === "BAD" ? "active" : ""
                           }`}
-                          onClick={() => handleFeedback(index, "dislike")}
+                          onClick={() => handleFeedback(index, "BAD", msg.id)}
                           aria-label="싫어요"
                         >
                           <ThumbDownIcon />
@@ -507,6 +512,7 @@ export default function ChatPage() {
               isLoggedIn={isLoggedIn}
               textareaRef={textareaRef}
               sendbuttonRef={sendbuttonRef}
+              loading={loading}
             />
           </div>
         </div>

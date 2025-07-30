@@ -36,6 +36,7 @@
 }
 .sidebar.open {
   width: 275px;
+  min-width: 275px;
   transition: width 300ms ease;
 }
 
