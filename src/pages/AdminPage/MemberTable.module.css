@@ -1,8 +1,12 @@
 .memberTable {
   display: grid;
-  grid-template-columns: 100px 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 100px 1fr 1fr 1fr 1fr 1fr;
   gap: 0;
   width: 100%;
+}
+
+.memberTable.companyTable {
+  grid-template-columns: 100px 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
 .tableHeader {
@@ -75,12 +79,12 @@
   cursor: default;
 }
 .rejectButton {
-  background-color: #2F2F2F;
+  background-color: #2f2f2f;
   border: 2px solid #595959;
   color: #fff;
 }
 .rejectButton:disabled {
-  background-color: #1D1D1D;
+  background-color: #1d1d1d;
   border: 2px solid #595959;
   color: #696969;
   cursor: default;

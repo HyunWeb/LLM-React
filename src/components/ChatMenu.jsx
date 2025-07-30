@@ -14,6 +14,7 @@ export default function ChatMenu() {
   const { chatId } = useParams();
   const { setChatId } = useChatIdStore();
   const { chatListName } = useChatListNameStore();
+  const { setIsFeedbackModalOpen } = useChatMenuStore();
 
   const {
     isAlertModalOpen,
@@ -25,12 +26,14 @@ export default function ChatMenu() {
   const openAlertModal = () => {
     setIsAlertModalOpen(true);
     setIsEditModalOpen(false);
+    setIsFeedbackModalOpen(false);
     setChatId(chatId);
   };
 
   const openEditModal = () => {
     setIsEditModalOpen(true);
     setIsAlertModalOpen(false);
+    setIsFeedbackModalOpen(false);
   };
 
   // 메뉴 밖 클릭 시 메뉴 닫기

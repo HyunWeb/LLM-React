@@ -21,7 +21,15 @@ export const useChatMenuStore = create((set) => ({
   setIsEditModalOpen: (value) => set({ isEditModalOpen: value }),
   isSidebarOpen: false,
   setIsSidebarOpen: (value) => set({ isSidebarOpen: value }),
+
+  isFeedbackModalOpen: false,
+  setIsFeedbackModalOpen: (value) => set({ isFeedbackModalOpen: value }),
+  feedbackMessageIndex: null,
+  setFeedbackMessageIndex: (index) => set({ feedbackMessageIndex: index }),
+  feedbackText: "",
+  setFeedbackText: (text) => set({ feedbackText: text }),
 }));
+
 export const useCustomAlertStore = create((set) => ({
   isCustomAlertOpen: false,
   setIsCustomAlertOpen: (value) => set({ isCustomAlertOpen: value }),

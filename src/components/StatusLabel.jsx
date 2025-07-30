@@ -2,17 +2,15 @@ import React from "react";
 import styles from "./StatusLabel.module.css";
 
 export default function StatusLabel({ status }) {
-  console.log("StatusLabel rendered with status:", status);
-  
   const getStatusText = (status) => {
     switch (status) {
       case "APPROVED":
         return "승인";
       case "REJECTED":
         return "거부";
-      case "PENDING":
+      case "WAITING":
         return "대기";
-      case "WITHDRAWAL":
+      case "WITHDRAWN":
         return "탈퇴";
       default:
         return "대기";
@@ -25,9 +23,9 @@ export default function StatusLabel({ status }) {
         return styles.approved;
       case "REJECTED":
         return styles.rejected;
-      case "PENDING":
+      case "WAITING":
         return styles.pending;
-      case "WITHDRAWAL":
+      case "WITHDRAWN":
         return styles.withdrawal;
       default:
         return styles.pending;
